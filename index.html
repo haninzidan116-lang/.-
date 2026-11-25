@@ -1,0 +1,2249 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تحدي المصنع الذكي ⚙️ | تكنولوجيا الإنتاج</title>
+  <!-- خطوط عربية هندسية حديثة -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'Tajawal', 'sans-serif'],
+            tajawal: ['Tajawal', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* خلفية هندسية نابضة بالألوان المتعددة */
+    body {
+      background-color: #090d1c;
+      color: #f8fafc;
+      font-family: 'Cairo', 'Tajawal', sans-serif;
+      background-image:
+        radial-gradient(circle at 8% 12%, rgba(168, 85, 247, 0.22) 0%, transparent 40%),
+        radial-gradient(circle at 92% 14%, rgba(236, 72, 153, 0.20) 0%, transparent 40%),
+        radial-gradient(circle at 85% 82%, rgba(6, 182, 212, 0.20) 0%, transparent 42%),
+        radial-gradient(circle at 15% 88%, rgba(245, 158, 11, 0.16) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+        linear-gradient(to right, rgba(99, 102, 241, 0.12) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(236, 72, 153, 0.10) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      overflow-x: hidden;
+    }
+
+    /* تأثيرات البطاقة ثلاثية الأبعاد */
+    .perspective-1000 {
+      perspective: 1200px;
+    }
+    .preserve-3d {
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    /* شريط تمرير مخصص */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #ec4899, #8b5cf6, #06b6d4);
+      border-radius: 9999px;
+    }
+
+    @keyframes pulseRainbow {
+      0%, 100% { box-shadow: 0 0 18px rgba(236, 72, 153, 0.30), 0 0 30px rgba(6, 182, 212, 0.20); }
+      50% { box-shadow: 0 0 28px rgba(245, 158, 11, 0.45), 0 0 42px rgba(168, 85, 247, 0.35); }
+    }
+    .glow-rainbow {
+      animation: pulseRainbow 3.5s infinite;
+    }
+
+    @keyframes floatGear {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(8deg); }
+    }
+    .float-gear {
+      animation: floatGear 4s ease-in-out infinite;
+    }
+
+    @keyframes shakeHeart {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-7px) rotate(-8deg); }
+      40% { transform: translateX(7px) rotate(8deg); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+    .shake-heart {
+      animation: shakeHeart 0.45s ease-in-out;
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printable-summary, #printable-summary * { visibility: visible; }
+      #printable-summary {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-pink-500/30 selection:text-cyan-200">
+
+  <!-- ==================== إشعار Toast منبثق أنيق ==================== -->
+  <div id="toast-container" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] pointer-events-none flex flex-col items-center gap-2 w-full max-w-md px-4"></div>
+
+  <!-- ==================== الشريط العلوي (Top Header Bar) ==================== -->
+  <header class="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-xl border-b border-fuchsia-500/30 shadow-lg shadow-purple-950/40">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- اليمين: شعار واسم المنصة -->
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-pink-500 via-purple-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-pink-500/35 float-gear shrink-0">
+          <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-xl font-black bg-gradient-to-l from-cyan-300 via-pink-400 to-amber-300 bg-clip-text text-transparent leading-tight">
+            تحدي المصنع الذكي ⚙️
+          </h1>
+          <p class="text-[11px] sm:text-xs text-slate-300 font-semibold">منصة تكنولوجيا الإنتاج التفاعلية وبنك الأسئلة</p>
+        </div>
+      </div>
+
+      <!-- الوسط: القلوب الثلاثة + المستوى + النقاط + السلسلة + الصوت -->
+      <div class="flex flex-wrap items-center gap-2 sm:gap-2.5 order-3 lg:order-2 w-full lg:w-auto justify-center bg-gradient-to-r from-indigo-950/90 via-purple-950/80 to-pink-950/80 px-3 py-1.5 rounded-2xl border border-pink-500/35 shadow-inner">
+        <!-- خانة القلوب الثلاثة (3 Hearts) -->
+        <div id="header-hearts-box" onclick="openRechargeHeartsModal()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-rose-500/20 border border-rose-400/50 cursor-pointer hover:bg-rose-500/30 transition" title="رصيد القلوب الثلاثة — اضغط لإعادة الشحن في أي وقت">
+          <span id="header-hearts" class="text-xs sm:text-sm tracking-wider">❤️❤️❤️</span>
+        </div>
+
+        <!-- المستوى والـ XP -->
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-fuchsia-500/20 border border-fuchsia-400/40" title="نقاط الخبرة والمستوى الهندسي">
+          <span class="text-xs font-bold text-fuchsia-200" id="header-level">مهندس متدرب</span>
+          <span class="text-xs bg-gradient-to-r from-pink-500 to-cyan-500 text-white font-extrabold px-2 py-0.5 rounded-lg" id="header-xp">0 XP</span>
+        </div>
+
+        <!-- النقاط -->
+        <div class="flex items-center gap-1 text-amber-300 font-extrabold text-xs sm:text-sm px-2" title="مجموع النقاط">
+          <span>🏆</span>
+          <span id="header-score">0</span>
+        </div>
+
+        <!-- السلسلة المتتالية -->
+        <div class="flex items-center gap-1 text-orange-400 font-extrabold text-xs sm:text-sm px-2 border-r border-purple-500/30" title="سلسلة الإجابات الصحيحة المتتالية">
+          <span>🔥</span>
+          <span id="header-streak">0</span>
+        </div>
+
+        <!-- زر كتم/تفعيل الصوت -->
+        <button id="sound-toggle" onclick="toggleSound()" class="p-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/35 border border-cyan-400/40 text-white transition active:scale-95" title="تفعيل/إيقاف المؤثرات الصوتية">
+          <span id="sound-icon">🔊</span>
+        </button>
+      </div>
+
+      <!-- اليسار: زر تواصل مع المطورة -->
+      <div class="order-2 lg:order-3">
+        <a href="https://t.me/H3NW4Y" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 hover:from-pink-400 hover:to-cyan-400 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-pink-500/30 transition-all hover:scale-105 active:scale-95">
+          <span>تواصل مع المطورة 💬</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== المحتوى الرئيسي (Main Container) ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-10">
+
+    <!-- بانر ترحيبي بألوان زاهية متعددة -->
+    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950/95 via-purple-950/90 to-pink-950/85 border-2 border-fuchsia-500/40 p-5 sm:p-8 shadow-2xl shadow-purple-950/50">
+      <div class="absolute -left-16 -top-16 w-64 h-64 bg-fuchsia-500/25 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute right-1/3 -top-20 w-60 h-60 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-amber-500/25 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div class="space-y-2.5 max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500/25 via-pink-500/25 to-cyan-500/25 border border-pink-400/45 text-amber-200 text-xs font-bold">
+            <span>⚡ المنهج الكامل + الملخص الهندسي + نظام القلوب الثلاثة ❤️❤️❤️</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-l from-white via-cyan-200 to-pink-200 bg-clip-text text-transparent leading-snug">
+            أتقن هندسة التصنيع وتكنولوجيا الإنتاج بألوان وتفاعلية ممتعة!
+          </h2>
+          <p class="text-slate-200 text-sm sm:text-base leading-relaxed">
+            استكشف <span class="text-cyan-300 font-bold">بطاقات المراجعة التفاعلية</span> والملخصات الهندسية المرسومة، ثم اختبر ذكاءك عبر <span class="text-amber-300 font-bold">12 مرحلة ملونة + التحدي النهائي الشامل</span> مع تنوع ذكي للإجابات وحماية قلوبك الثلاثة!
+          </p>
+        </div>
+
+        <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full lg:w-auto">
+          <a href="#flashcards-section" class="flex-1 sm:flex-initial text-center px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-slate-950 font-extrabold text-sm transition shadow-lg shadow-cyan-500/30">
+            🗂️ بطاقات المراجعة
+          </a>
+          <a href="#stages-section" class="flex-1 sm:flex-initial text-center px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-pink-500 hover:from-amber-300 hover:to-pink-400 text-white font-extrabold text-sm transition shadow-lg shadow-pink-500/30">
+            🚀 ابدأ مراحل التحدي
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== القسم الأول: بطاقات المراجعة التفاعلية ==================== -->
+    <section id="flashcards-section" class="space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 class="text-xl sm:text-2xl font-extrabold text-white flex items-center gap-2.5">
+            <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center text-white shadow-md">🗂️</span>
+            <span class="bg-gradient-to-l from-cyan-300 via-fuchsia-300 to-pink-300 bg-clip-text text-transparent">بطاقات المراجعة التفاعلية</span>
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1">اضغط على البطاقة لقلبها ومشاهدة الإجابة النموذجية والرسم الهندسي التوضيحي</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-bold text-slate-200 bg-gradient-to-r from-purple-950/90 to-cyan-950/90 px-3.5 py-2 rounded-2xl border border-fuchsia-400/40 self-start sm:self-auto">
+          <span>البطاقة:</span>
+          <span id="fc-counter" class="text-amber-300 text-sm">1 / 16</span>
+        </div>
+      </div>
+
+      <!-- أزرار تصفية المحاضرات بألوان متعددة -->
+      <div id="fc-filters" class="flex items-center gap-2 overflow-x-auto pb-2">
+        <!-- يتم توليدها ديناميكياً -->
+      </div>
+
+      <!-- حاوية البطاقة ثلاثية الأبعاد -->
+      <div class="max-w-3xl mx-auto">
+        <div class="perspective-1000 w-full min-h-[340px] sm:min-h-[370px] cursor-pointer" onclick="flipFlashcard()">
+          <div id="fc-inner" class="preserve-3d relative w-full min-h-[340px] sm:min-h-[370px]">
+            
+            <!-- وجه البطاقة الأمامي (السؤال) -->
+            <div class="backface-hidden absolute inset-0 rounded-3xl bg-gradient-to-br from-indigo-950 via-purple-950/90 to-pink-950/80 border-2 border-fuchsia-400/55 hover:border-cyan-300 p-6 sm:p-8 flex flex-col justify-between shadow-2xl shadow-purple-950/50 transition-colors">
+              <div class="flex items-center justify-between gap-2">
+                <span id="fc-category-badge" class="px-3.5 py-1 rounded-full bg-gradient-to-r from-pink-500/30 to-cyan-500/30 border border-pink-400/50 text-cyan-200 text-xs font-extrabold">
+                  نظم الإنتاج
+                </span>
+                <button type="button" onclick="event.stopPropagation(); toggleHint()" class="px-3.5 py-1 rounded-xl bg-gradient-to-r from-amber-500/30 to-orange-500/30 hover:from-amber-500/40 hover:to-orange-500/40 border border-amber-400/50 text-amber-200 text-xs font-bold transition">
+                  💡 تلميح
+                </button>
+              </div>
+
+              <div class="my-auto text-center space-y-4 py-4">
+                <p id="fc-question" class="text-lg sm:text-2xl font-extrabold text-white leading-relaxed">
+                  جاري تحميل السؤال...
+                </p>
+                <div id="fc-hint-box" class="hidden mx-auto max-w-lg px-4 py-2.5 rounded-2xl bg-amber-500/20 border border-amber-400/50 text-amber-200 text-xs sm:text-sm">
+                </div>
+              </div>
+
+              <div class="flex items-center justify-center gap-2 text-cyan-200 text-xs font-bold">
+                <span>🔄 اضغط في أي مكان على البطاقة لإظهار الإجابة والرسم الهندسي</span>
+              </div>
+            </div>
+
+            <!-- وجه البطاقة الخلفي (الإجابة + الرسم التوضيحي SVG) -->
+            <div class="backface-hidden rotate-y-180 absolute inset-0 rounded-3xl bg-gradient-to-br from-emerald-950 via-teal-950 to-indigo-950 border-2 border-emerald-400/65 p-5 sm:p-7 flex flex-col justify-between shadow-2xl overflow-y-auto">
+              <div class="flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full bg-emerald-500/25 border border-emerald-400/50 text-emerald-200 text-xs font-extrabold">
+                  ✅ الإجابة الهندسية والشرح
+                </span>
+                <span class="text-xs text-cyan-200 font-bold">اضغط للعودة للسؤال ↩️</span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center my-auto py-3">
+                <div class="md:col-span-7 space-y-2 text-right">
+                  <p id="fc-answer" class="text-sm sm:text-base text-white font-bold leading-relaxed"></p>
+                  <div id="fc-formula" class="hidden px-3 py-2 rounded-xl bg-slate-950/90 border border-amber-400/50 text-amber-300 font-mono text-xs sm:text-sm dir-ltr text-center"></div>
+                </div>
+                <div id="fc-svg-container" class="md:col-span-5 flex items-center justify-center bg-slate-950/80 rounded-2xl p-2.5 border border-cyan-400/40 min-h-[155px]">
+                  <!-- الرسم الهندسي SVG -->
+                </div>
+              </div>
+
+              <div class="text-center text-[11px] text-emerald-300 font-bold">
+                تكنولوجيا الإنتاج — المراجعة الذكية الملونة ✨
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- أزرار التحكم بالبطاقات + زر عرض الكل كملخص 📄 -->
+        <div class="mt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-3 w-full sm:w-auto justify-center">
+            <button onclick="prevFlashcard()" class="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-extrabold text-sm transition active:scale-95 flex items-center justify-center gap-2 shadow-md">
+              <span>➡️ السابق</span>
+            </button>
+            <button onclick="flipFlashcard()" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-pink-500/30 to-cyan-500/30 hover:from-pink-500/40 hover:to-cyan-500/40 border border-pink-400/55 text-cyan-200 font-extrabold text-sm transition active:scale-95">
+              🔄 اقلب
+            </button>
+            <button onclick="nextFlashcard()" class="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-extrabold text-sm transition active:scale-95 flex items-center justify-center gap-2 shadow-md">
+              <span>التالي ⬅️</span>
+            </button>
+          </div>
+
+          <!-- زر عرض الكل كملخص 📄 -->
+          <button onclick="openSummaryModal()" class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 hover:from-emerald-300 hover:to-cyan-300 text-slate-950 font-black text-sm shadow-lg shadow-emerald-500/30 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+            <span>عرض الكل كملخص 📄</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== القسم الثاني: مراحل تحدي المصنع الذكي (12 مرحلة + التحدي النهائي) ==================== -->
+    <section id="stages-section" class="space-y-6 pt-4 border-t border-fuchsia-500/30">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-xl sm:text-2xl font-extrabold text-white flex items-center gap-2.5">
+            <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-orange-500 to-pink-500 flex items-center justify-center text-white shadow-md">🏭</span>
+            <span class="bg-gradient-to-l from-amber-300 via-pink-300 to-cyan-300 bg-clip-text text-transparent">مراحل تحدي المصنع الذكي (12 مرحلة + التحدي النهائي)</span>
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1">كل مرحلة بلون وتحدٍّ هندسي مختلف — حافظ على قلوبك الثلاثة ❤️❤️❤️ وأجب بتركيز!</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <div class="px-3.5 py-2 rounded-2xl bg-purple-950/80 border border-purple-400/40 text-xs font-bold text-slate-200">
+            الإنجاز: <span id="stages-progress-text" class="text-emerald-300 font-extrabold">0 / 13</span> مرحلة
+          </div>
+          <button id="unlock-all-btn" onclick="toggleUnlockAll()" class="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-amber-500/25 to-pink-500/25 hover:from-amber-500/35 hover:to-pink-500/35 border border-amber-400/50 text-amber-200 text-xs font-bold transition">
+            🔓 فتح جميع المراحل للمراجعة الحرة
+          </button>
+        </div>
+      </div>
+
+      <!-- شريط التقدم العام الملون -->
+      <div class="w-full h-3.5 bg-slate-900 rounded-full overflow-hidden border border-purple-500/40 p-0.5">
+        <div id="overall-progress-bar" class="h-full bg-gradient-to-l from-cyan-400 via-fuchsia-500 via-amber-400 to-emerald-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+      </div>
+
+      <!-- شبكة المراحل الـ 12 -->
+      <div id="stages-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <!-- يتم توليد بطاقات المراحل ديناميكياً -->
+      </div>
+
+      <!-- بطاقة التحدي النهائي الشامل (Stage 13) -->
+      <div id="final-boss-container" class="pt-2">
+        <!-- يتم توليدها ديناميكياً -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== التذييل (Footer) مع خانة التقييم وحقوق الملكية ==================== -->
+  <footer class="mt-14 bg-slate-950/95 border-t border-fuchsia-500/30 pt-8 pb-6 px-4">
+    <div class="max-w-5xl mx-auto space-y-6">
+      
+      <!-- خانة تقييم المبرمجة والكلمة الطيبة -->
+      <div class="rounded-3xl bg-gradient-to-r from-indigo-950/95 via-purple-950/90 to-pink-950/85 border border-pink-500/40 p-5 sm:p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="text-center md:text-right space-y-1.5">
+          <div class="inline-flex items-center gap-1.5 text-amber-300 font-extrabold text-sm sm:text-base">
+            <span>💖 تقييم المبرمجة والكلمة الطيبة</span>
+          </div>
+          <p class="text-slate-200 text-xs sm:text-sm leading-relaxed">
+            تقييم المبرمجة والكلمة الطيبة: إذا كانت المنصة مفيدة لك، يسعدنا ترك تقييمك ودعم المبرمجة
+          </p>
+        </div>
+
+        <div class="shrink-0">
+          <a href="https://www.facebook.com/your-profile-or-page" target="_blank" rel="noopener noreferrer"
+             class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-pink-500 hover:from-amber-300 hover:to-pink-400 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/25 transition-all hover:scale-105 active:scale-95">
+            <span>تقييم على فيسبوك ⭐</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- حقوق الملكية -->
+      <div class="text-center pt-2 border-t border-slate-800/80">
+        <p class="text-slate-300 text-xs sm:text-sm font-bold tracking-wide">
+          جميع الحقوق محفوظة لدي منصة تحدي المصنع الذكي © 2026 | Design by Hanin ✨
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ==================== نافذة ملخصات المحاضرات (Summary Modal) ==================== -->
+  <div id="summary-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/85 backdrop-blur-md p-2 sm:p-4">
+    <div class="bg-slate-900 border-2 border-fuchsia-500/45 rounded-3xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- رأس النافذة -->
+      <div class="px-5 py-4 bg-gradient-to-r from-indigo-950 via-purple-950 to-pink-950 border-b border-fuchsia-500/35 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">📚</span>
+          <div>
+            <h4 class="text-base sm:text-lg font-extrabold text-white">الملخص الهندسي الشامل للمحاضرات وبنك الأسئلة</h4>
+            <p class="text-xs text-cyan-200">اختر المحاضرة لعرض القوانين، المقارنات، والرسومات الهندسية التوضيحية</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-cyan-500/25 hover:bg-cyan-500/35 border border-cyan-400/50 text-cyan-200 text-xs font-bold transition">
+            <span>🖨️ طباعة الملخص</span>
+          </button>
+          <button onclick="closeSummaryModal()" class="w-9 h-9 rounded-xl bg-rose-500/25 hover:bg-rose-500 border border-rose-400/50 text-white font-bold flex items-center justify-center transition">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- محتوى النافذة -->
+      <div class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-12">
+        <div id="lecture-list" class="md:col-span-4 bg-slate-950/80 border-b md:border-b-0 md:border-l border-purple-500/30 p-3 space-y-2">
+          <!-- يتم تعبئتها ديناميكياً -->
+        </div>
+        <div id="printable-summary" class="md:col-span-8 p-5 sm:p-6 space-y-5 overflow-y-auto">
+          <!-- يتم تعبئتها ديناميكياً -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== نافذة اللعب وحل الأسئلة (Quiz Stage Modal) ==================== -->
+  <div id="quiz-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/90 backdrop-blur-md p-2 sm:p-4">
+    <div class="bg-gradient-to-b from-slate-900 via-indigo-950/50 to-slate-900 border-2 border-fuchsia-500/50 rounded-3xl w-full max-w-3xl max-h-[94vh] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- شريط علوي للمرحلة يضم القلوب الثلاثة -->
+      <div class="px-4 sm:px-5 py-3.5 bg-gradient-to-r from-indigo-950 via-purple-950 to-pink-950 border-b border-fuchsia-500/35 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <span id="quiz-stage-badge" class="text-xs font-bold text-pink-300">المرحلة 1</span>
+          <h4 id="quiz-stage-title" class="text-sm sm:text-lg font-extrabold text-white">عنوان المرحلة</h4>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <!-- عداد القلوب الثلاثة داخل التحدي -->
+          <div id="quiz-hearts-pill" class="px-3 py-1 rounded-xl bg-rose-500/25 border border-rose-400/55 text-xs sm:text-sm font-bold tracking-wider" title="القلوب المتبقية">
+            <span id="quiz-hearts-display">❤️❤️❤️</span>
+          </div>
+          <span id="quiz-q-counter" class="px-3 py-1 rounded-xl bg-slate-900/90 border border-amber-400/50 text-xs font-bold text-amber-300">1 / 4</span>
+          <button onclick="closeQuizModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-rose-500 text-white font-bold flex items-center justify-center transition">✕</button>
+        </div>
+      </div>
+
+      <!-- شريط تقدم الأسئلة -->
+      <div class="w-full h-2 bg-slate-800">
+        <div id="quiz-progress-bar" class="h-full bg-gradient-to-l from-cyan-400 via-pink-500 to-amber-400 transition-all duration-300" style="width: 25%"></div>
+      </div>
+
+      <!-- جسم السؤال -->
+      <div id="quiz-body" class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
+        <div class="space-y-3">
+          <div id="quiz-type-tag" class="inline-block px-3 py-0.5 rounded-full bg-gradient-to-r from-pink-500/25 to-cyan-500/25 border border-pink-400/40 text-[11px] font-bold text-cyan-200">
+            اختيار من متعدد
+          </div>
+          <p id="quiz-question-text" class="text-base sm:text-xl font-extrabold text-white leading-relaxed"></p>
+          <div id="quiz-svg-box" class="hidden max-w-md mx-auto bg-slate-950/90 p-3 rounded-2xl border border-cyan-400/40 flex justify-center"></div>
+        </div>
+
+        <!-- خيارات الإجابة (أ، ب، ج، د مخلوطة بذكاء) -->
+        <div id="quiz-options" class="grid grid-cols-1 gap-3"></div>
+
+        <!-- صندوق التغذية الراجعة -->
+        <div id="quiz-feedback" class="hidden rounded-2xl p-4 border space-y-2">
+          <div id="quiz-feedback-title" class="font-extrabold text-sm sm:text-base"></div>
+          <p id="quiz-feedback-explanation" class="text-xs sm:text-sm text-slate-100 leading-relaxed"></p>
+        </div>
+      </div>
+
+      <!-- أسفل نافذة الاختبار -->
+      <div class="px-5 py-3.5 bg-slate-900/95 border-t border-purple-500/35 flex items-center justify-between">
+        <div class="text-xs text-slate-300">
+          نقاط المرحلة الحالية: <span id="quiz-stage-score" class="text-amber-300 font-extrabold">0</span>
+        </div>
+        <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden px-6 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-cyan-300 hover:to-purple-500 text-white font-extrabold text-sm transition shadow-lg">
+          السؤال التالي ⬅️
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== نافذة نفاد القلوب الثلاثة (Out of Hearts / Recharge Modal) ==================== -->
+  <div id="gameover-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/90 backdrop-blur-md p-3">
+    <div class="bg-gradient-to-br from-rose-950 via-slate-900 to-purple-950 border-2 border-rose-500/75 rounded-3xl w-full max-w-md p-6 sm:p-8 text-center space-y-5 shadow-2xl shadow-rose-950/70">
+      <div class="text-5xl sm:text-6xl animate-bounce">💔</div>
+      <div class="space-y-2">
+        <span class="px-3.5 py-1 rounded-full bg-rose-500/25 border border-rose-400/50 text-rose-200 text-xs font-extrabold">
+          انتهت المحاولات المتاحة (🖤🖤🖤)
+        </span>
+        <h3 class="text-2xl sm:text-3xl font-black text-white">نفدت القلوب الثلاثة!</h3>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          لقد فقدت قلوبك الثلاثة أثناء التحدي. اضغط على <span class="text-amber-300 font-bold">إعادة شحن القلوب</span> لاستعادة قلوبك الثلاثة ومتابعة اللعب، أو عد للقائمة الرئيسية!
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-3 pt-2">
+        <button onclick="rechargeHeartsAndContinue()" class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-white font-black text-sm sm:text-base shadow-lg shadow-rose-500/35 transition transform hover:scale-105 active:scale-95">
+          إعادة شحن القلوب 🔄 (❤️❤️❤️)
+        </button>
+        <button onclick="returnToMainMenuFromGameOver()" class="w-full py-3 px-5 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-bold text-sm transition active:scale-95">
+          العودة للقائمة الرئيسية 🏠
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== نافذة شهادة الإنجاز الهندسي (Certificate Modal) ==================== -->
+  <div id="cert-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/90 backdrop-blur-md p-3">
+    <div class="bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-900 border-2 border-amber-400/80 rounded-3xl w-full max-w-2xl p-6 sm:p-8 text-center space-y-5 shadow-2xl relative overflow-hidden">
+      <div class="absolute inset-3 border border-amber-400/30 rounded-2xl pointer-events-none"></div>
+      <div class="text-4xl sm:text-5xl">🏅</div>
+      <div class="space-y-1">
+        <p class="text-xs font-bold text-amber-300 tracking-widest">شهادة اجتياز وتفوق هندسي</p>
+        <h3 class="text-2xl sm:text-3xl font-black text-white">مهندس الإنتاج الذكي المعتمد</h3>
+      </div>
+      <p class="text-slate-200 text-sm">تمنح منصة <span class="text-cyan-300 font-bold">تحدي المصنع الذكي</span> هذه الشهادة إلى:</p>
+      <div class="max-w-sm mx-auto">
+        <input id="student-name-input" type="text" placeholder="اكتب اسمك هنا لتخصيص الشهادة..." class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-amber-400/60 text-center text-white font-bold text-base focus:outline-none focus:border-cyan-400" />
+      </div>
+      <p class="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-lg mx-auto">
+        لإتمامه بنجاح كافة مراحل تكنولوجيا الإنتاج، عمليات التصنيع، الاختبارات الهندسية، وبنك الأسئلة بمجموع نقاط <span id="cert-score-val" class="text-amber-300 font-extrabold">0</span> نقطة.
+      </p>
+      <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
+        <button onclick="closeCertModal()" class="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-pink-500 text-slate-950 font-black text-sm transition hover:scale-105">
+          رائع! العودة للمنصة ✨
+        </button>
+      </div>
+      <p class="text-[11px] text-slate-400">تحدي المصنع الذكي © 2026 | Design by Hanin ✨</p>
+    </div>
+  </div>
+
+  <!-- ==================== المنطق البرمجي الكامل ==================== -->
+  <script>
+    // ==================== 1. نظام المؤثرات الصوتية ====================
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.12, gainVal = 0.1) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playClick() { playTone(520, 'triangle', 0.07, 0.08); }
+    function playSuccess() {
+      playTone(523.25, 'sine', 0.12, 0.12);
+      setTimeout(() => playTone(659.25, 'sine', 0.12, 0.12), 90);
+      setTimeout(() => playTone(783.99, 'sine', 0.22, 0.14), 180);
+    }
+    function playError() {
+      playTone(220, 'sawtooth', 0.18, 0.1);
+      setTimeout(() => playTone(175, 'sawtooth', 0.25, 0.1), 130);
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound-icon').textContent = soundEnabled ? '🔊' : '🔇';
+      if (soundEnabled) playClick();
+    }
+
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const el = document.createElement('div');
+      el.className = 'px-4 py-3 rounded-2xl bg-gradient-to-r from-indigo-950 via-purple-950 to-pink-950 border border-pink-400/60 text-white text-xs sm:text-sm font-bold shadow-2xl text-center transition-all duration-300';
+      el.textContent = msg;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(10px)';
+        setTimeout(() => el.remove(), 300);
+      }, 2800);
+    }
+
+    // ==================== 2. الرسومات الهندسية التوضيحية (SVG Library) ====================
+    const SVGs = {
+      stressStrain: `
+        <svg viewBox="0 0 260 170" class="w-full h-36">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#94a3b8"/>
+            </marker>
+          </defs>
+          <line x1="35" y1="145" x2="245" y2="145" stroke="#94a3b8" stroke-width="2" marker-end="url(#arr)"/>
+          <line x1="35" y1="145" x2="35" y2="15" stroke="#94a3b8" stroke-width="2" marker-end="url(#arr)"/>
+          <text x="15" y="25" fill="#38bdf8" font-size="11" font-weight="bold">σ</text>
+          <text x="235" y="160" fill="#38bdf8" font-size="11" font-weight="bold">ε</text>
+          <polygon points="35,145 75,65 75,145" fill="rgba(6,182,212,0.22)"/>
+          <path d="M 35 145 L 75 65 Q 85 58 95 62 Q 145 25 185 32 Q 210 42 225 65" fill="none" stroke="#f59e0b" stroke-width="3"/>
+          <circle cx="75" cy="65" r="3.5" fill="#06b6d4"/>
+          <text x="42" y="55" fill="#06b6d4" font-size="9" font-weight="bold">حد المرونة</text>
+          <circle cx="168" cy="29" r="3.5" fill="#10b981"/>
+          <text x="145" y="18" fill="#10b981" font-size="9" font-weight="bold">UTS أقصى إجهاد</text>
+          <circle cx="225" cy="65" r="3.5" fill="#f43f5e"/>
+          <text x="200" y="82" fill="#f43f5e" font-size="9" font-weight="bold">الكسر</text>
+          <text x="43" y="135" fill="#cbd5e1" font-size="8">مرن</text>
+          <text x="125" y="135" fill="#cbd5e1" font-size="8">لدن (تشوه دائم)</text>
+        </svg>`,
+
+      creepStages: `
+        <svg viewBox="0 0 260 170" class="w-full h-36">
+          <line x1="35" y1="145" x2="245" y2="145" stroke="#94a3b8" stroke-width="2"/>
+          <line x1="35" y1="145" x2="35" y2="15" stroke="#94a3b8" stroke-width="2"/>
+          <text x="10" y="25" fill="#38bdf8" font-size="10" font-weight="bold">ε</text>
+          <text x="210" y="160" fill="#38bdf8" font-size="10" font-weight="bold">الزمن t</text>
+          <line x1="85" y1="20" x2="85" y2="145" stroke="#64748b" stroke-dasharray="3,3"/>
+          <line x1="175" y1="20" x2="175" y2="145" stroke="#64748b" stroke-dasharray="3,3"/>
+          <path d="M 35 125 Q 55 95 85 88 L 175 68 Q 205 55 220 22" fill="none" stroke="#ec4899" stroke-width="3"/>
+          <circle cx="220" cy="22" r="4" fill="#f43f5e"/>
+          <text x="45" y="138" fill="#cbd5e1" font-size="9" font-weight="bold">1. ابتدائي</text>
+          <text x="110" y="138" fill="#cbd5e1" font-size="9" font-weight="bold">2. ثانوي (ثابت)</text>
+          <text x="182" y="138" fill="#f43f5e" font-size="9" font-weight="bold">3. ثالثي (انهيار)</text>
+          <text x="95" y="58" fill="#f59e0b" font-size="8">T > 0.4 Tm</text>
+        </svg>`,
+
+      techProcedure: `
+        <svg viewBox="0 0 280 165" class="w-full h-36">
+          <rect x="10" y="15" width="75" height="34" rx="6" fill="#1e1b4b" stroke="#06b6d4" stroke-width="1.5"/>
+          <text x="47" y="30" text-anchor="middle" fill="#38bdf8" font-size="8.5" font-weight="bold">1. الخامة المبدئية</text>
+          <text x="47" y="42" text-anchor="middle" fill="#cbd5e1" font-size="7.5">Stock Material</text>
+          <path d="M 87 32 L 101 32" stroke="#f59e0b" stroke-width="2"/>
+          <rect x="103" y="15" width="75" height="34" rx="6" fill="#1e1b4b" stroke="#a855f7" stroke-width="1.5"/>
+          <text x="140" y="30" text-anchor="middle" fill="#d8b4fe" font-size="8.5" font-weight="bold">2. خراطة الأقطار</text>
+          <text x="140" y="42" text-anchor="middle" fill="#cbd5e1" font-size="7.5">Turning</text>
+          <path d="M 180 32 L 194 32" stroke="#f59e0b" stroke-width="2"/>
+          <rect x="196" y="15" width="75" height="34" rx="6" fill="#1e1b4b" stroke="#ec4899" stroke-width="1.5"/>
+          <text x="233" y="30" text-anchor="middle" fill="#f9a8d4" font-size="8.5" font-weight="bold">3. تفريز الأسطح</text>
+          <text x="233" y="42" text-anchor="middle" fill="#cbd5e1" font-size="7.5">Milling</text>
+          <path d="M 233 51 L 233 78" stroke="#f59e0b" stroke-width="2"/>
+          <rect x="196" y="80" width="75" height="34" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
+          <text x="233" y="95" text-anchor="middle" fill="#34d399" font-size="8.5" font-weight="bold">4. التثقيب</text>
+          <text x="233" y="107" text-anchor="middle" fill="#cbd5e1" font-size="7.5">Drilling</text>
+          <path d="M 194 97 L 180 97" stroke="#f59e0b" stroke-width="2"/>
+          <rect x="103" y="80" width="75" height="34" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
+          <text x="140" y="95" text-anchor="middle" fill="#34d399" font-size="8.5" font-weight="bold">5. معالجة وتجليخ</text>
+          <text x="140" y="107" text-anchor="middle" fill="#cbd5e1" font-size="7.5">Grinding</text>
+          <path d="M 101 97 L 87 97" stroke="#f59e0b" stroke-width="2"/>
+          <rect x="10" y="80" width="75" height="34" rx="6" fill="#047857" stroke="#34d399" stroke-width="2"/>
+          <text x="47" y="95" text-anchor="middle" fill="#ffffff" font-size="8.5" font-weight="bold">6. فحص نهائي</text>
+          <text x="47" y="107" text-anchor="middle" fill="#a7f3d0" font-size="7.5">Final Part ✓</text>
+          <text x="140" y="145" text-anchor="middle" fill="#fbbf24" font-size="9" font-weight="bold">تسلسل خطة التشغيل من الخامة للشكل النهائي</text>
+        </svg>`,
+
+      vernierMicro: `
+        <svg viewBox="0 0 270 165" class="w-full h-36">
+          <rect x="15" y="25" width="240" height="32" rx="4" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+          <text x="25" y="42" fill="#e2e8f0" font-size="9" font-weight="bold">مسطرة رئيسية: 24 mm</text>
+          <line x1="40" y1="57" x2="40" y2="48" stroke="#38bdf8" stroke-width="1.5"/>
+          <line x1="70" y1="57" x2="70" y2="45" stroke="#38bdf8" stroke-width="2"/>
+          <text x="65" y="38" fill="#38bdf8" font-size="8">20</text>
+          <line x1="110" y1="57" x2="110" y2="48" stroke="#f59e0b" stroke-width="2"/>
+          <text x="104" y="38" fill="#f59e0b" font-size="8">24</text>
+          <rect x="110" y="59" width="115" height="30" rx="4" fill="#0f172a" stroke="#ec4899" stroke-width="1.5"/>
+          <line x1="158" y1="59" x2="158" y2="72" stroke="#10b981" stroke-width="2.5"/>
+          <text x="167" y="78" fill="#10b981" font-size="9" font-weight="bold">تطابق: 0.40 mm</text>
+          <rect x="25" y="105" width="220" height="44" rx="8" fill="rgba(16,185,129,0.16)" stroke="#10b981"/>
+          <text x="135" y="123" text-anchor="middle" fill="#34d399" font-size="10" font-weight="bold">القراءة = 24 + 0.40 = 24.40 mm</text>
+          <text x="135" y="139" text-anchor="middle" fill="#cbd5e1" font-size="8.5">دقة الورنية: 0.02 أو 0.05 mm | الميكرومتر: 0.01 mm</text>
+        </svg>`,
+
+      sandCasting: `
+        <svg viewBox="0 0 260 165" class="w-full h-36">
+          <rect x="30" y="35" width="200" height="50" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+          <rect x="30" y="85" width="200" height="55" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/>
+          <text x="42" y="52" fill="#cbd5e1" font-size="8">Cope علوي</text>
+          <text x="42" y="130" fill="#cbd5e1" font-size="8">Drag سفلي</text>
+          <polygon points="75,20 92,20 87,85 80,85" fill="#f59e0b"/>
+          <text x="65" y="15" fill="#fbbf24" font-size="8.5" font-weight="bold">مصب Sprue</text>
+          <rect x="80" y="82" width="45" height="8" fill="#f59e0b"/>
+          <rect x="120" y="65" width="65" height="42" rx="4" fill="#f97316" stroke="#fed7aa" stroke-width="1.5"/>
+          <text x="152" y="90" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">المسبوك</text>
+          <rect x="155" y="22" width="22" height="43" fill="#ec4899" stroke="#fbcfe8"/>
+          <text x="182" y="30" fill="#f9a8d4" font-size="8.5" font-weight="bold">الصاعد Riser</text>
+          <text x="182" y="42" fill="#cbd5e1" font-size="7.5">(يعوض الانكماش)</text>
+        </svg>`,
+
+      impactTest: `
+        <svg viewBox="0 0 260 165" class="w-full h-36">
+          <text x="65" y="20" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold">Charpy شاربي</text>
+          <rect x="25" y="85" width="80" height="14" fill="#64748b"/>
+          <polygon points="62,85 68,85 65,91" fill="#0f172a"/>
+          <polygon points="25,99 35,99 30,115" fill="#06b6d4"/>
+          <polygon points="95,99 105,99 100,115" fill="#06b6d4"/>
+          <path d="M 65 55 L 65 80" stroke="#f43f5e" stroke-width="2.5"/>
+          <text x="65" y="135" text-anchor="middle" fill="#cbd5e1" font-size="8.5">أفقية - الثلم عكس الضربة</text>
+          <line x1="130" y1="15" x2="130" y2="150" stroke="#475569" stroke-dasharray="3,3"/>
+          <text x="195" y="20" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">Izod إيزود</text>
+          <rect x="188" y="45" width="14" height="75" fill="#64748b"/>
+          <polygon points="188,78 188,84 194,81" fill="#0f172a"/>
+          <rect x="172" y="85" width="46" height="35" fill="#334155" stroke="#94a3b8"/>
+          <path d="M 160 55 L 184 55" stroke="#f43f5e" stroke-width="2.5"/>
+          <text x="195" y="135" text-anchor="middle" fill="#cbd5e1" font-size="8.5">رأسية كابولية - الثلم نحو الضربة</text>
+        </svg>`,
+
+      timeChart: `
+        <svg viewBox="0 0 260 165" class="w-full h-36">
+          <rect x="20" y="30" width="220" height="38" rx="8" fill="#1e293b" stroke="#64748b"/>
+          <rect x="22" y="32" width="204" height="34" rx="6" fill="#f59e0b"/>
+          <text x="120" y="53" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="bold">95% نقل ومناولة وانتظار</text>
+          <rect x="226" y="32" width="12" height="34" rx="3" fill="#06b6d4"/>
+          <path d="M 232 72 L 232 95" stroke="#06b6d4" stroke-width="2"/>
+          <text x="195" y="110" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold">5% فقط وقت الماكينة!</text>
+          <text x="130" y="140" text-anchor="middle" fill="#cbd5e1" font-size="8.5">تخطيط المصانع الجيد يقلل نسبة الـ 95% المهدرة</text>
+        </svg>`,
+
+      machiningGeom: `
+        <svg viewBox="0 0 260 165" class="w-full h-36">
+          <rect x="40" y="85" width="180" height="50" rx="4" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+          <polygon points="115,20 145,20 145,75 130,92 115,75" fill="#ec4899" stroke="#fbcfe8"/>
+          <path d="M 105 38 Q 130 48 155 38" fill="none" stroke="#f59e0b" stroke-width="2"/>
+          <text x="195" y="42" fill="#fbbf24" font-size="9" font-weight="bold">N (rpm)</text>
+          <text x="195" y="56" fill="#38bdf8" font-size="9" font-weight="bold">V = πDN / 1000</text>
+          <path d="M 85 55 L 85 82" stroke="#10b981" stroke-width="2"/>
+          <text x="55" y="70" fill="#34d399" font-size="9" font-weight="bold">f تغذية</text>
+          <text x="130" y="118" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="bold">الشغلة (Workpiece)</text>
+        </svg>`
+    };
+
+    // ==================== 3. بيانات بطاقات المراجعة التفاعلية (16 بطاقة كاملة) ====================
+    const flashcardsData = [
+      {
+        category: "نظم الإنتاج",
+        question: "كيف يتوزع الوقت الكلي للمنتج داخل المصنع بين وقت التشغيل الفعلي ووقت الانتظار والنقل؟",
+        hint: "النسبة الأكبر ليست على الماكينة!",
+        answer: "يقضي المنتج 95% من وقته في النقل والمناولة والانتظار والتفتيش، بينما يقضي 5% فقط من الوقت الفعلي على الماكينة (منها 30% قطع فعلي و70% تحميل وتفريغ).",
+        formula: "Total Time = 95% (Moving & Waiting) + 5% (On Machine)",
+        svg: SVGs.timeChart
+      },
+      {
+        category: "تخطيط المصانع",
+        question: "قارن بين التخطيط بالعملية (Process Layout) والتخطيط بالمنتج (Product Layout) ومتى نستخدم كلاً منهما؟",
+        hint: "تذكر حجم الإنتاج وتنوع المنتجات.",
+        answer: "• التخطيط بالعملية (الوظيفي): تجميع الماكينات المتشابهة معاً (قسم خراطة، قسم تفريز) ويناسب الإنتاج بالدفعات المتنوعة.\n• التخطيط بالمنتج (الخطي): ترتيب الماكينات حسب تسلسل عمليات المنتج ويناسب الإنتاج الكمي الكبير (Mass Production).",
+        formula: "Product Layout → High Volume | Process Layout → High Variety",
+        svg: SVGs.techProcedure
+      },
+      {
+        category: "الخواص الميكانيكية",
+        question: "ما الفرق الجوهري بين المتانة (Toughness) والصلادة (Hardness) والمرونة (Elasticity)؟",
+        hint: "المتانة ترتبط بالمساحة تحت منحنى الإجهاد والانفعال.",
+        answer: "• المرونة: قدرة المادة على استعادة أبعادها الأصلية بعد زوال الحمل.\n• المتانة: قدرة المادة على امتصاص الطاقة ومقاومة الصدمات قبل الكسر (المساحة الكلية تحت منحنى σ-ε).\n• الصلادة: مقاومة سطح المادة للخدش والتآكل والاختراق.",
+        formula: "Toughness = ∫ σ dε (Area under Stress-Strain Curve)",
+        svg: SVGs.stressStrain
+      },
+      {
+        category: "الخواص الميكانيكية",
+        question: "ما هي ظاهرة الزحف (Creep) ومتى تحدث، وما هي مراحله الثلاث؟",
+        hint: "تحدث عند درجات الحرارة المرتفعة تحت حمل ثابت.",
+        answer: "الزحف هو تشوه لدن بطيء ومستمر للمادة بمرور الزمن تحت إجهاد ثابت (حتى لو كان أقل من حد الخضوع) عند درجة حرارة T > 0.4 Tm. مراحله: (1) ابتدائي متناقص السرعة، (2) ثانوي ثابت السرعة، (3) ثالثي متسارع ينتهي بالكسر.",
+        formula: "Creep Condition: T > 0.4 × T_melting (Kelvin)",
+        svg: SVGs.creepStages
+      },
+      {
+        category: "المعالجة الحرارية",
+        question: "ما الفرق بين التلدين (Annealing) والتطبيع (Normalizing) والتقسية (Hardening)؟",
+        hint: "الفرق الرئيسي يكمن في معدل التبريد ووسط التبريد.",
+        answer: "• التلدين: تسخين ثم تبريد بطيء جداً داخل الفرن لتليين المعدن وإزالة الإجهادات.\n• التطبيع: تبريد في الهواء الساكن لتنعيم الحبيبات وتحسين الخواص.\n• التقسية: تبريد مفاجئ (Quenching) في الماء أو الزيت لزيادة الصلادة وتكوين المارتنسيت.",
+        formula: "Cooling Rate: Quenching > Normalizing > Annealing",
+        svg: SVGs.stressStrain
+      },
+      {
+        category: "التشكيل الحراري",
+        question: "كيف نميز بين التشغيل على البارد (Cold Working) والتشغيل على الساخن (Hot Working)؟",
+        hint: "المعيار الفاصل هو درجة حرارة إعادة التبلور (Recrystallization Temperature).",
+        answer: "• التشغيل على البارد: يتم تحت درجة حرارة إعادة التبلور؛ يزيد الصلادة والمتانة (Strain Hardening) ويعطي دقة أبعاد وسطوح ناعمة.\n• التشغيل على الساخن: يتم فوق درجة إعادة التبلور؛ يحتاج قوى أقل ويسمح بتشكيل كبير دون تصلد انفعالي.",
+        formula: "T_recrystallization ≈ 0.4 to 0.5 T_melting",
+        svg: SVGs.machiningGeom
+      },
+      {
+        category: "الاختبارات المتلفة",
+        question: "ما الفرق بين اختبار الصدم شاربي (Charpy) وإيزود (Izod) في تثبيت العينة واتجاه الضربة؟",
+        hint: "أحدهما عارضة بسيطة والآخر كابولية.",
+        answer: "• شاربي (Charpy): العينة أفقية مرتكزة من الطرفين (Simple Beam) والثلم (Notch) في الجهة المقابلة (عكس) ضربة البندول.\n• إيزود (Izod): العينة رأسية مثبتة من طرف واحد (Cantilever) والثلم يواجه ضربة البندول.",
+        formula: "Impact Energy = m × g × (h_0 - h_f)",
+        svg: SVGs.impactTest
+      },
+      {
+        category: "الاختبارات المتلفة",
+        question: "متى نستخدم كرة فولاذية (HBS) ومتى نستخدم كرة كربيد التنجستن (HBW) في اختبار برينيل؟ وما شرط روكويل C؟",
+        hint: "تعتمد على صلادة العينة المختبرة.",
+        answer: "• في برينيل: نستخدم HBS للعينات ذات الصلادة ≤ 450 HB، وكرة كربيد التنجستن HBW للصلادات الأعلى حتى 650 HB.\n• في روكويل C (مخروط ماسي 120° وحمل 150 kgf): يشترط أن تكون الصلادة HRC ≥ 20.",
+        formula: "HB = (2F) / [πD (D - √(D² - d²))]",
+        svg: SVGs.stressStrain
+      },
+      {
+        category: "الاختبارات اللا إتلافية",
+        question: "اذكر أهم 4 اختبارات لا إتلافية (NDT) ووظيفة كل منها؟",
+        hint: "تفحص العيوب السطحية والداخلية دون إتلاف المنتج.",
+        answer: "1. السوائل المتغلغلة (PT): كشف الشروخ السطحية المفتوحة للمواد غير المسامية.\n2. الجسيمات المغناطيسية (MT): العيوب السطحية وتحت السطحية للمواد المغناطيسية فقط.\n3. الموجات فوق الصوتية (UT) والأشعة السينية (RT): كشف العيوب الداخلية العميقة وقياس السمك.",
+        formula: "NDT = Inspection without damaging part integrity",
+        svg: SVGs.machiningGeom
+      },
+      {
+        category: "سباكة المعادن",
+        question: "ما هي مكونات خلطة رمل السباكة القياسية وما وظيفة الصاعد (Riser)؟",
+        hint: "النسب هي 90% و 7% و 3%.",
+        answer: "• خلطة الرمل القياسية: 90% رمل سيليكا، 7% طفلة (بنتونيت للتماسك)، 3% ماء.\n• وظيفة الصاعد (Riser): خزان للمعدن المنصهر يعوض الانكماش الحجمي أثناء التجمد، لذلك يجب أن يتجمد بعد المسبوك.",
+        formula: "Sand Mix: 90% Silica + 7% Clay + 3% Water",
+        svg: SVGs.sandCasting
+      },
+      {
+        category: "التشكيل واللحام",
+        question: "ما الفرق بين البثق المباشر (Direct Extrusion) والبثق غير المباشر (Indirect Extrusion)؟",
+        hint: "انظر إلى حركة المعدن بالنسبة لجدار الحاوية.",
+        answer: "• البثق المباشر: يتحرك المكبس والمعدن في نفس الاتجاه مما يولد احتكاكاً عالياً مع جدار الحاوية.\n• البثق غير المباشر: القالب مثبت في المكبس المجوف فيخرج المعدن في عكس اتجاه حركة المكبس دون احتكاك مع جدار الحاوية (قوة أقل).",
+        formula: "Indirect Extrusion → No container friction → Lower Force",
+        svg: SVGs.machiningGeom
+      },
+      {
+        category: "التشغيل بالقطع",
+        question: "ما هي المعادلات الأساسية لحساب سرعة القطع وزمن التثقيب والتفريز؟",
+        hint: "تذكر العلاقة بين القطر D وعدد اللفات N.",
+        answer: "• سرعة القطع: V = (π × D × N) / 1000 (m/min).\n• زمن التثقيب: T = (L + A) / (f × N) حيث A = 0.3 D.\n• زمن التفريز الوجهي/الطرفي: T = (L + L_approach + L_overtravel) / (f_z × Z × N).",
+        formula: "V = πDN/1000  |  T_drill = (L + 0.3D)/(f·N)",
+        svg: SVGs.machiningGeom
+      },
+      {
+        category: "مخطط التشغيل",
+        question: "ما هو مخطط التشغيل (Technological Procedure) وما هي خطواته الـ 6 الأساسية؟",
+        hint: "خطة هندسية تحول الخامة المبدئية إلى منتج نهائي.",
+        answer: "هو التسلسل المنطقي للعمليات الصناعية والماكينات والعدد اللازمة لتصنيع قطعة. خطواته: (1) تحديد الخامة المبدئية Stock، (2) خراطة الأقطار، (3) تفريز الأسطح، (4) التثقيب والقلوظة، (5) المعالجة الحرارية والتجليخ، (6) الفحص النهائي.",
+        formula: "Stock → Turning → Milling → Drilling → Grinding → Inspection",
+        svg: SVGs.techProcedure
+      },
+      {
+        category: "القياس والعدد",
+        question: "كيف نحسب قراءة القدمة ذات الورنية (Vernier Caliper) وما دقة الميكرومتر القياسي؟",
+        hint: "نجمع قراءة المسطرة الرئيسية مع تدريج الورنية المنطبق.",
+        answer: "• قراءة الورنية = القراءة الصحيحة على المسطرة الرئيسية قبل صفر الورنية + (رقم الشرطة المنطبقة × دقة الورنية 0.02 أو 0.05 mm).\n• دقة الميكرومتر القياسي تساوي 0.01 mm (خطوة القلاووظ 0.5 mm مقسمة على 50 قسم).",
+        formula: "Reading = Main Scale + (Coinciding Line × Least Count)",
+        svg: SVGs.vernierMicro
+      },
+      {
+        category: "قوانين بنك الأسئلة",
+        question: "كيف نحسب العدد الأمثل للماكينات (N_OPT) ومعامل الأمان (Factor of Safety)؟",
+        hint: "معامل الأمان يربط مقاومة المادة بالإجهاد المسموح.",
+        answer: "• معامل الأمان: F.S = إجهاد الخضوع أو الأقصى / الإجهاد المسموح به (σ_yield / σ_working) ويجب أن يكون أكبر من 1.\n• عدد الماكينات المطلوبة: N = (الكمية المطلوبة × زمن القطعة) / (الزمن المتاح × الكفاءة).",
+        formula: "F.S = σ_y / σ_allow  |  N = (Q × T_p) / (H × η)",
+        svg: SVGs.stressStrain
+      },
+      {
+        category: "ANSYS والمحاكاة",
+        question: "ما هو دور تحليل العناصر المحددة (FEA / ANSYS) في التصميم والتصنيع الحديث؟",
+        hint: "يقسم النموذج المعقد إلى شبكة من العناصر الصغيرة (Mesh).",
+        answer: "يقوم برنامج ANSYS بتقسيم النموذج الهندسي (CAD) إلى عناصر صغيرة مترابطة عند العقد (Nodes) لحساب توزيع الإجهادات والتشوهات والحرارة قبل التصنيع الفعلي، مما يوفر التكلفة والوقت.",
+        formula: "CAD Geometry → Meshing (Nodes & Elements) → Solve → Post-Process",
+        svg: SVGs.stressStrain
+      }
+    ];
+
+    // ==================== 4. بيانات ملخصات المحاضرات الـ 7 الكاملة ====================
+    const lecturesSummaries = [
+      {
+        id: 1,
+        title: "1. مقدمة ونظم الإنتاج وتخطيط المصانع",
+        badge: "المحاضرة الأولى",
+        svg: SVGs.timeChart,
+        points: [
+          "عمليات التصنيع الأربعة الأساسية: (1) التشكيل وتغيير الشكل (سباكة، تشكيل لدن، تشغيل بالقطع)، (2) تحسين الخواص (المعالجة الحرارية)، (3) عمليات السطح (تنظيف وطلاء)، (4) عمليات التجميع الدائم والمؤقت.",
+          "توزيع وقت المنتج: 95% من الوقت يضيع في النقل والمناولة والانتظار، و5% فقط على الماكينة (30% قطع فعلي و70% تحميل وتفريغ).",
+          "أنواع تخطيط المصانع (Plant Layout): التخطيط بالمنتج (Product Layout - خطوط إنتاج كمي)، التخطيط بالعملية (Process Layout - ورش متخصصة)، التخطيط الثابت (Fixed Position - السفن والطائرات)، والتخطيط الخلوي (Cellular Layout)."
+        ],
+        formulas: [
+          "N_required = (Q × T_cycle) / (Available Time × Efficiency)",
+          "N_OPT = √( (2 × C_setup × D) / C_holding )"
+        ],
+        table: {
+          headers: ["وجه المقارنة", "التخطيط بالمنتج (Product)", "التخطيط بالعملية (Process)"],
+          rows: [
+            ["حجم الإنتاج", "كبير جداً (Mass Production)", "متوسط أو بالدفعات (Batch)"],
+            ["تنوع المنتجات", "محدود / نمطي", "متنوع جداً"],
+            ["مناولة المواد", "سريعة ومميكنة (سيور ناقلة)", "بطيئة وتحتاج مرونة عالية"]
+          ]
+        }
+      },
+      {
+        id: 2,
+        title: "2. المواد الهندسية والخواص الميكانيكية",
+        badge: "المحاضرة الثانية",
+        svg: SVGs.stressStrain,
+        points: [
+          "تصنيف المواد الهندسية: معادن (حديدية كالصلب والزهر، وغير حديدية كالألومنيوم والنحاس)، بوليمرات، سيراميك، ومواد مركبة (Composites).",
+          "المرونة (Elasticity): عودة المادة لأبعادها بعد زوال الحمل وتخضع لقانون هوك (σ = E × ε).",
+          "اللدونة (Plasticity): تشوه دائم لا يزول بزوال الحمل، وتبدأ بعد نقطة الخضوع (Yield Point).",
+          "المتانة (Toughness): القدرة على امتصاص الطاقة قبل الكسر (المساحة الكلية تحت منحنى σ-ε)، بينما الرجوعية (Resilience) هي الطاقة الممتصة في منطقة المرونة فقط.",
+          "الزحف (Creep): تشوه لدن بطيء تحت حمل ثابت عند درجات حرارة عالية (T > 0.4 Tm) ويمر بـ 3 مراحل: ابتدائي، ثانوي، وثالثي."
+        ],
+        formulas: [
+          "σ = F / A₀   |   ε = ΔL / L₀   |   E = σ / ε",
+          "Creep Temp > 0.4 × T_melting (Kelvin)"
+        ],
+        table: {
+          headers: ["الخاصية", "التعريف الهندسي", "اختبار القياس"],
+          rows: [
+            ["الصلادة (Hardness)", "مقاومة السطح للخدش والاختراق", "برينيل، روكويل، فيكرز"],
+            ["المتانة (Toughness)", "مقاومة الصدمات وامتصاص الطاقة", "شاربي (Charpy) وإيزود (Izod)"],
+            ["الكلل (Fatigue)", "الانهيار تحت أحمال متكررة متغيرة", "اختبار الانحناء الدوار"]
+          ]
+        }
+      },
+      {
+        id: 3,
+        title: "3. المعالجة الحرارية والتشغيل على البارد والساخن",
+        badge: "المحاضرة الثالثة",
+        svg: SVGs.creepStages,
+        points: [
+          "التلدين (Annealing): تسخين فوق درجة التحول ثم تبريد بطيء جداً داخل الفرن؛ يزيل الإجهادات الداخلية ويجعل المعدن ليناً سهل التشغيل.",
+          "التطبيع (Normalizing): تسخين ثم تبريد في الهواء الساكن؛ يعطي بنية حبيبية أدق وأقوى من التلدين.",
+          "التقسية (Hardening): تسخين ثم تبريد سريع مفاجئ (Quenching) في الماء أو الزيت لتكوين بنية المارتنسيت شديدة الصلادة والهشاشة، ويتبعها المراجعة (Tempering) لتقليل الهشاشة.",
+          "التشغيل على البارد (Cold Working): يتم تحت درجة إعادة التبلور؛ يسبب التصلد الانفعالي (Strain Hardening) ويرفع المقاومة ودقة الأبعاد.",
+          "التشغيل على الساخن (Hot Working): يتم فوق درجة إعادة التبلور؛ يقلل قوى التشكيل ويزيل التصلد الانفعالي فوراً."
+        ],
+        formulas: [
+          "T_recrystallization ≈ 0.4 to 0.5 T_m",
+          "Cold Work % = ((A₀ - A_f) / A₀) × 100"
+        ],
+        table: {
+          headers: ["العملية", "وسط التبريد", "النتيجة الرئيسية"],
+          rows: [
+            ["التلدين (Annealing)", "داخل الفرن (بطيء جداً)", "أقصى ليونة وأقل صلادة"],
+            ["التطبيع (Normalizing)", "الهواء الساكن (متوسط)", "تنعيم الحبيبات وتوحيد الخواص"],
+            ["التقسية (Hardening)", "ماء أو زيت (سريع جداً)", "أقصى صلادة ومقاومة تآكل"]
+          ]
+        }
+      },
+      {
+        id: 4,
+        title: "4. الاختبارات المتلفة واللا إتلافية وANSYS",
+        badge: "المحاضرة الرابعة",
+        svg: SVGs.impactTest,
+        points: [
+          "اختبار الشد: يحدد معامل يونج، إجهاد الخضوع، أقصى إجهاد شد (UTS)، ونسبة الاستطالة.",
+          "اختبار برينيل (Brinell): كرة فولاذية (HBS حتى 450 HB) أو كربيد التنجستن (HBW حتى 650 HB) بقطر D=10mm.",
+          "اختبار روكويل (Rockwell): يقيس عمق الاختراق مباشرة؛ مقياس HRC يستخدم مخروط ماسي وحمل 150 kgf للصلادات ≥ 20 HRC.",
+          "الاختبارات اللا إتلافية (NDT): السوائل المتغلغلة (PT) للسطح، الجسيمات المغناطيسية (MT) للمعادن المغناطيسية، الموجات فوق الصوتية (UT) والأشعة (RT) للعيوب الداخلية.",
+          "تحليل العناصر المحددة (ANSYS / FEA): تقسيم النموذج إلى شبكة عناصر (Mesh) لحساب الإجهادات والتشوهات افتراضياً."
+        ],
+        formulas: [
+          "HB = (2F) / [πD (D - √(D² - d²))]",
+          "Factor of Safety (F.S) = σ_yield / σ_working"
+        ],
+        table: {
+          headers: ["اختبار NDT", "نوع العيوب المكتشفة", "شرط المادة"],
+          rows: [
+            ["السوائل المتغلغلة (PT)", "سطحية مفتوحة فقط", "غير مسامية (معادن/بلاستيك/سيراميك)"],
+            ["الجسيمات المغناطيسية (MT)", "سطحية وتحت سطحية قريبة", "مواد مغناطيسية (Ferromagnetic) فقط"],
+            ["الموجات فوق الصوتية (UT)", "داخلية عميقة + قياس السمك", "مواد ناقلة للصوت"]
+          ]
+        }
+      },
+      {
+        id: 5,
+        title: "5. السباكة والتشكيل اللدن واللحام",
+        badge: "المحاضرة الخامسة",
+        svg: SVGs.sandCasting,
+        points: [
+          "السباكة الرملية: خلطة الرمل تتكون من 90% رمل سيليكا + 7% طفلة + 3% ماء. يحتوي القالب على مصب (Sprue) ومجرى (Runner) وصاعد (Riser) لتعويض الانكماش.",
+          "السباكة الاستثمارية (الشمع المفقود): تعطي أعلى دقة أبعاد وأنعم سطح للمسبوكات المعقدة.",
+          "السباكة بالطرد المركزي: تستخدم لإنتاج المواسير والأسطوانات المجوفة بدون دليك (Core) حيث يطرد المعدن الكثيف للخارج والشوائب للداخل.",
+          "التشكيل اللدن: الدرفلة (Rolling) لتقليل السمك، الحدادة (Forging) لتوجيه الألياف وزيادة المتانة، البثق (Extrusion) لإنتاج المقاطع المعقدة، والسحب (Drawing) للأسلاك.",
+          "اللحام: لحام الانصهار (القوس الكهربائي، الغاز) ولحام الحالة الصلبة (الاحتكاك، المقاومة الكهربائية)."
+        ],
+        formulas: [
+          "Solidification Time (Chvorinov): t = C_m × (V / A)²",
+          "Sand Mix = 90% Silica + 7% Bentonite + 3% Water"
+        ],
+        table: {
+          headers: ["عملية السباكة", "نوع القالب", "أهم ميزة"],
+          rows: [
+            ["السباكة الرملية", "مؤقت (يُكسر)", "مناسبة للأحجام الكبيرة وجميع المعادن"],
+            ["السباكة بالاسطمبات (Die)", "دائم (معدني)", "إنتاج كمي سريع جداً ودقة عالية"],
+            ["السباكة الاستثمارية", "مؤقت (شمع + سيراميك)", "أدق تفاصيل هندسية دون تشغيل إضافي"]
+          ]
+        }
+      },
+      {
+        id: 6,
+        title: "6. التشغيل بالقطع ومخطط التشغيل وأدوات القياس",
+        badge: "المحاضرة السادسة",
+        svg: SVGs.vernierMicro,
+        points: [
+          "الخراطة (Turning): تدور الشغلة ويتحرك قلم القطع؛ بينما في التفريز (Milling) تدور سكينة التفريز متعددة الحدود وتتحرك الشغلة.",
+          "زمن التثقيب (Drilling): T = (L + 0.3D) / (f × N)، وزمن التفريز: T = (L + L_c) / (f_z × Z × N).",
+          "خطوات مخطط التشغيل الـ 6 (Technological Procedure): (1) الخامة المبدئية Stock، (2) خراطة الأقطار، (3) تفريز الأسطح، (4) التثقيب والقلوظة، (5) المعالجة الحرارية والتجليخ، (6) الفحص النهائي.",
+          "أدوات القياس: القدمة ذات الورنية (دقة 0.02 أو 0.05 mm) تقيس الأقطار الخارجية والداخلية والأعماق، والميكرومتر القياسي (دقة 0.01 mm)."
+        ],
+        formulas: [
+          "V = (π × D × N) / 1000   |   T_drill = (L + 0.3D) / (f × N)",
+          "Vernier = Main + (Coinciding × 0.05)  |  Micrometer = Main + (Thimble × 0.01)"
+        ],
+        table: {
+          headers: ["أداة القياس", "الدقة القياسية (Least Count)", "الاستخدام الأساسي"],
+          rows: [
+            ["القدمة ذات الورنية", "0.02 mm أو 0.05 mm", "أقطار خارجية وداخلية وأعماق"],
+            ["الميكرومتر الخارجي", "0.01 mm", "قياس الأقطار والأسماك بدقة فائقة"],
+            ["ساعة القياس (Dial Gauge)", "0.01 mm أو 0.001 mm", "فحص الاستقامة والانحراف (Runout)"]
+          ]
+        }
+      },
+      {
+        id: 7,
+        title: "7. ملخص قوانين ومسائل بنك الأسئلة الشامل",
+        badge: "بنك الأسئلة",
+        svg: SVGs.machiningGeom,
+        points: [
+          "تذكر دائماً تحويل الوحدات في قوانين القطع: القطر D بالمليمتر (mm)، وسرعة القطع V بالمتر/دقيقة (m/min)، لذا نقسم على 1000.",
+          "في اختبار الصدم: شاربي (Charpy) أفقية والثلم عكس الضربة، إيزود (Izod) رأسية كابولية والثلم يواجه الضربة.",
+          "معامل الأمان (Factor of Safety) يجب أن يكون دائماً أكبر من 1 (F.S = σ_yield / σ_allow).",
+          "البثق غير المباشر يحتاج قوة أقل من المباشر لعدم وجود احتكاك بين كتلة المعدن وجدار الحاوية."
+        ],
+        formulas: [
+          "F.S = σ_y / σ_allow > 1   |   N_machines = (Q × T_p) / (H × η)",
+          "f_m (Milling Feed) = f_z × Z × N (mm/min)"
+        ],
+        table: {
+          headers: ["المفهوم", "القيمة / الشرط الصحيح", "خطأ شائع في الامتحان"],
+          rows: [
+            ["وقت المنتج على الماكينة", "5% فقط (95% نقل وانتظار)", "الاعتقاد أنه 95% على الماكينة"],
+            ["خلطة رمل السباكة", "90% سيليكا + 7% طفلة + 3% ماء", "عكس نسب السيليكا والطفلة"],
+            ["تجمد الصاعد (Riser)", "يتجمد بعد المسبوك لتعويض الانكماش", "تجمد الصاعد قبل المسبوك"]
+          ]
+        }
+      }
+    ];
+
+    // ==================== 5. لوحة ألوان المراحل الـ 12 + بيانات المراحل الـ 13 الكاملة ====================
+    const stageColorThemes = [
+      { cardBg: "from-cyan-950/90 via-slate-900 to-blue-950/90", border: "border-cyan-400/55 hover:border-cyan-300", iconBg: "from-cyan-400 to-blue-600", badge: "bg-cyan-500/25 text-cyan-200", accent: "text-cyan-300" },
+      { cardBg: "from-purple-950/90 via-slate-900 to-indigo-950/90", border: "border-purple-400/55 hover:border-purple-300", iconBg: "from-purple-500 to-indigo-600", badge: "bg-purple-500/25 text-purple-200", accent: "text-purple-300" },
+      { cardBg: "from-pink-950/90 via-slate-900 to-rose-950/90", border: "border-pink-400/55 hover:border-pink-300", iconBg: "from-pink-500 to-rose-600", badge: "bg-pink-500/25 text-pink-200", accent: "text-pink-300" },
+      { cardBg: "from-amber-950/90 via-slate-900 to-orange-950/90", border: "border-amber-400/55 hover:border-amber-300", iconBg: "from-amber-400 to-orange-600", badge: "bg-amber-500/25 text-amber-200", accent: "text-amber-300" },
+      { cardBg: "from-emerald-950/90 via-slate-900 to-teal-950/90", border: "border-emerald-400/55 hover:border-emerald-300", iconBg: "from-emerald-400 to-teal-600", badge: "bg-emerald-500/25 text-emerald-200", accent: "text-emerald-300" },
+      { cardBg: "from-fuchsia-950/90 via-slate-900 to-purple-950/90", border: "border-fuchsia-400/55 hover:border-fuchsia-300", iconBg: "from-fuchsia-500 to-purple-600", badge: "bg-fuchsia-500/25 text-fuchsia-200", accent: "text-fuchsia-300" },
+      { cardBg: "from-orange-950/90 via-slate-900 to-red-950/90", border: "border-orange-400/55 hover:border-orange-300", iconBg: "from-orange-500 to-red-600", badge: "bg-orange-500/25 text-orange-200", accent: "text-orange-300" },
+      { cardBg: "from-teal-950/90 via-slate-900 to-cyan-950/90", border: "border-teal-400/55 hover:border-teal-300", iconBg: "from-teal-400 to-cyan-600", badge: "bg-teal-500/25 text-teal-200", accent: "text-teal-300" },
+      { cardBg: "from-indigo-950/90 via-slate-900 to-violet-950/90", border: "border-indigo-400/55 hover:border-indigo-300", iconBg: "from-indigo-500 to-violet-600", badge: "bg-indigo-500/25 text-indigo-200", accent: "text-indigo-300" },
+      { cardBg: "from-rose-950/90 via-slate-900 to-pink-950/90", border: "border-rose-400/55 hover:border-rose-300", iconBg: "from-rose-500 to-pink-600", badge: "bg-rose-500/25 text-rose-200", accent: "text-rose-300" },
+      { cardBg: "from-sky-950/90 via-slate-900 to-blue-950/90", border: "border-sky-400/55 hover:border-sky-300", iconBg: "from-sky-400 to-blue-600", badge: "bg-sky-500/25 text-sky-200", accent: "text-sky-300" },
+      { cardBg: "from-violet-950/90 via-slate-900 to-fuchsia-950/90", border: "border-violet-400/55 hover:border-violet-300", iconBg: "from-violet-500 to-fuchsia-600", badge: "bg-violet-500/25 text-violet-200", accent: "text-violet-300" }
+    ];
+
+    const stagesData = [
+      {
+        id: 1,
+        title: "عمليات التصنيع وتوزيع الوقت",
+        topic: "أساسيات تكنولوجيا الإنتاج",
+        icon: "⚙️",
+        questions: [
+          {
+            type: "اختيار من متعدد",
+            text: "كم تبلغ نسبة الوقت الفعلي الذي يقضيه المنتج على الماكينة مقارنة بإجمالي وقت تواجده داخل المصنع؟",
+            svg: SVGs.timeChart,
+            options: ["50% على الماكينة و50% نقل", "5% فقط على الماكينة و95% نقل وانتظار", "80% على الماكينة و20% فحص", "30% على الماكينة و70% تغليف"],
+            correct: 1,
+            explanation: "يقضي المنتج 95% من وقته في النقل والمناولة والانتظار، بينما يقضي 5% فقط على الماكينة (منها 30% قطع فعلي و70% تحميل وتفريغ)."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "أي من العمليات التالية تُصنف ضمن عمليات (تحسين الخواص) وليس تغيير الشكل؟",
+            options: ["السباكة الرملية (Sand Casting)", "الخراطة والتفريز", "المعالجة الحرارية (Heat Treatment)", "الدرفلة على البارد"],
+            correct: 2,
+            explanation: "المعالجة الحرارية تغير البنية المجهرية والخواص الميكانيكية للمعدن دون تغيير شكله الهندسي."
+          },
+          {
+            type: "صواب أم خطأ",
+            text: "صواب أم خطأ: من الوقت الذي يقضيه المنتج على الماكينة (الـ 5%)، يُستغل 70% في القطع الفعلي و30% في التحميل والتفريغ.",
+            options: ["صواب — 70% قطع فعلي و30% تحميل", "خطأ — العكس صحيح (30% قطع فعلي و70% تحميل وتفريغ)"],
+            correct: 1,
+            explanation: "العبارة خاطئة؛ لأن 30% فقط من وقت الماكينة هو قطع فعلي، بينما 70% يضيع في التحميل والتفريغ والضبط والقياس."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "تُصنف عمليات اللحام والبرشمة والربط بالمسامير ضمن:",
+            options: ["عمليات السطح (Surface Processing)", "عمليات التشكيل اللدن", "عمليات إزالة الرايش", "عمليات التجميع (Assembly Operations)"],
+            correct: 3,
+            explanation: "التجميع يربط جزأين أو أكثر لتكوين كيان جديد (تجميع دائم كاللحام، أو مؤقت كالمسامير)."
+          }
+        ]
+      },
+      {
+        id: 2,
+        title: "نظم الإنتاج وتخطيط المصانع",
+        topic: "Plant Layout & Production Systems",
+        icon: "🏗️",
+        questions: [
+          {
+            type: "اختيار من متعدد",
+            text: "في أي نوع من تخطيط المصانع يتم تجميع الماكينات المتشابهة وظيفياً في قسم واحد (مثل قسم الخراطة وقسم التفريز)؟",
+            options: ["التخطيط بالمنتج (Product Layout)", "التخطيط الثابت (Fixed Position Layout)", "التخطيط بالعملية (Process / Functional Layout)", "خط التجميع المستمر"],
+            correct: 2,
+            explanation: "التخطيط بالعملية (Process Layout) يجمع الماكينات المتشابهة معاً ويناسب الإنتاج بالدفعات المتنوعة."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "ما هو التخطيط الأنسب لتصنيع السفن العملاقة والطائرات وتوربينات الرياح الضخمة؟",
+            options: ["التخطيط بالمنتج (Product Layout)", "التخطيط ذو الموضع الثابت (Fixed-Position Layout)", "التخطيط بالعملية", "الإنتاج المستمر"],
+            correct: 1,
+            explanation: "بسبب ضخامة ووزن المنتج، يبقى المنتج ثابتاً في مكانه وتنتقل إليه العمالة والمعدات والخامات."
+          },
+          {
+            type: "مسألة حسابية",
+            text: "مطلوب إنتاج 4800 قطعة في وردية عمل مدتها 8 ساعات (480 دقيقة)، وزمن إنتاج القطعة الواحدة 0.5 دقيقة بكفاءة 100%. كم عدد الماكينات المطلوبة؟",
+            options: ["10 ماكينات", "3 ماكينات", "8 ماكينات", "5 ماكينات"],
+            correct: 3,
+            explanation: "الزمن الكلي المطلوب = 4800 × 0.5 = 2400 دقيقة. عدد الماكينات N = 2400 / 480 = 5 ماكينات."
+          },
+          {
+            type: "صواب أم خطأ",
+            text: "صواب أم خطأ: يتميز التخطيط بالمنتج (Product Layout) بمرونة عالية جداً لتغيير تصميم المنتج مقارنة بالتخطيط بالعملية.",
+            options: ["صواب — يتميز بأعلى مرونة", "خطأ — التخطيط بالمنتج قليل المرونة ومخصص للإنتاج الكمي"],
+            correct: 1,
+            explanation: "التخطيط بالمنتج مصمم خصيصاً لمنتج نمطي بكميات ضخمة، لذا مرونته للتغيير منخفضة مقارنة بالتخطيط بالعملية."
+          }
+        ]
+      },
+      {
+        id: 3,
+        title: "المواد الهندسية والخواص الميكانيكية",
+        topic: "المرونة، اللدونة، المتانة والزحف",
+        icon: "🔬",
+        questions: [
+          {
+            type: "تحليل رسم هندسي",
+            text: "في منحنى الإجهاد والانفعال الموضح، ماذا تمثل المساحة الكلية تحت المنحنى حتى نقطة الكسر؟",
+            svg: SVGs.stressStrain,
+            options: ["الرجوعية (Resilience)", "معامل يونج (Young's Modulus)", "المتانة (Toughness)", "الصلادة (Hardness)"],
+            correct: 2,
+            explanation: "المساحة الكلية تحت منحنى الإجهاد والانفعال تمثل الطاقة الكلية الممتصة حتى الكسر وهي المتانة (Toughness)."
+          },
+          {
+            type: "تحليل رسم هندسي",
+            text: "تُعرف ظاهرة الزحف (Creep) بأنها تشوه لدن بطيء تحت حمل ثابت، وتحدث عند درجة حرارة:",
+            svg: SVGs.creepStages,
+            options: ["أقل من الصفر المئوي دائماً", "أكبر من 0.4 من درجة الانصهار المطلقة (T > 0.4 Tm)", "عند درجة حرارة الغرفة لجميع المعادن", "أعلى من درجة الغليان فقط"],
+            correct: 1,
+            explanation: "يصبح الزحف مؤثراً في المعادن عندما تتجاوز درجة حرارة التشغيل 40% من درجة الانصهار بالكلفن (T > 0.4 Tm)."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "ما هي الخاصية التي تعبر عن قدرة المادة على التشكيل بالسحب إلى أسلاك رفيعة دون أن تنكسر؟",
+            options: ["الهشاشة (Brittleness)", "الصلادة (Hardness)", "الرجوعية (Resilience)", "الممطولية (Ductility)"],
+            correct: 3,
+            explanation: "الممطولية (Ductility) هي قدرة المادة على الاستطالة والتشوه اللدن تحت إجهاد الشد دون كسر."
+          },
+          {
+            type: "صواب أم خطأ",
+            text: "صواب أم خطأ: المرحلتان الأساسيتان للزحف هما الابتدائي والرابع، ولا توجد مرحلة ثابتة السرعة.",
+            options: ["صواب — مرحلتان فقط", "خطأ — للزحف 3 مراحل: ابتدائي متناقص، ثانوي ثابت السرعة، وثالثي متسارع"],
+            correct: 1,
+            explanation: "يمر الزحف بثلاث مراحل واضحة: الابتدائي (Primary)، الثانوي ذو معدل الزحف الثابت (Secondary)، والثالثي الذي ينتهي بالانهيار (Tertiary)."
+          }
+        ]
+      },
+      {
+        id: 4,
+        title: "المعالجة الحرارية والتشغيل البارد والساخن",
+        topic: "Heat Treatment & Working Temp",
+        icon: "🔥",
+        questions: [
+          {
+            type: "اختيار من متعدد",
+            text: "أي عملية معالجة حرارية تتضمن تسخين الصلب ثم تبريده ببطء شديد داخل الفرن للحصول على أقصى ليونة؟",
+            options: ["التقسية (Quenching / Hardening)", "التطبيع (Normalizing)", "التلدين الكامل (Full Annealing)", "المراجعة (Tempering)"],
+            correct: 2,
+            explanation: "التلدين (Annealing) يعتمد على التبريد البطيء جداً داخل الفرن لإزالة الإجهادات وتليين المعدن."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "ما هو المعيار الفاصل بين التشغيل على البارد (Cold Working) والتشغيل على الساخن (Hot Working)؟",
+            options: ["درجة حرارة الغرفة (25°C)", "درجة حرارة إعادة التبلور (Recrystallization Temperature)", "درجة انصهار المعدن", "درجة غليان الماء (100°C)"],
+            correct: 1,
+            explanation: "التشغيل تحت درجة إعادة التبلور هو تشغيل على البارد، وفوقها هو تشغيل على الساخن."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "ماذا يحدث للمعدن عند تشكيله على البارد (Cold Working)؟",
+            options: ["تقل صلادته ويزداد حجم حبيباته", "يحدث له إعادة تبلور فورية", "تتأكسد سطوحه بشدة وتقل دقة أبعاده", "تزداد صلادته ومقاومته (Strain Hardening) وتقل ممطوليته"],
+            correct: 3,
+            explanation: "التشغيل على البارد يسبب التصلد الانفعالي (Strain Hardening) فيرفع الصلادة والمقاومة ويعطي دقة أبعاد ممتازة."
+          },
+          {
+            type: "صواب أم خطأ",
+            text: "صواب أم خطأ: تُجرى عملية المراجعة (Tempering) بعد التقسية مباشرة لزيادة الهشاشة وتقليل المتانة.",
+            options: ["صواب — تزيد الهشاشة", "خطأ — المراجعة تُجرى لتقليل الهشاشة وزيادة المتانة وإزالة إجهادات التبريد السريع"],
+            correct: 1,
+            explanation: "المارتنسيت الناتج عن التقسية يكون شديد الهشاشة، لذا نُجري المراجعة (Tempering) لتخفيف الإجهادات واستعادة المتانة."
+          }
+        ]
+      },
+      {
+        id: 5,
+        title: "الاختبارات المتلفة ومعامل الأمان",
+        topic: "Destructive Testing & Safety Factor",
+        icon: "🧪",
+        questions: [
+          {
+            type: "تحليل رسم هندسي",
+            text: "بناءً على الرسم المقارن، كيف يتم تثبيت العينة وتوجيه الضربة في اختبار شاربي (Charpy)؟",
+            svg: SVGs.impactTest,
+            options: ["تُثبت رأسياً ككابول والثلم نحو الضربة", "تُثبت أفقياً كعارضة بسيطة والثلم عكس اتجاه الضربة", "تُثبت أفقياً والثلم نحو الضربة", "تُثبت رأسياً والثلم عكس الضربة"],
+            correct: 1,
+            explanation: "في شاربي ترتكز العينة أفقياً من الطرفين ويكون الثلم (V-Notch) في الوجه المقابل (عكس) ضربة البندول."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "في اختبار صلادة روكويل مقياس C (HRC) باستخدام مخروط ماسي، ما هو الشرط الأساسي لتطبيقه؟",
+            options: ["أن تكون العينة من الألومنيوم اللين", "أن تكون الصلادة أقل من 10 HRC", "أن تكون صلادة العينة HRC ≥ 20", "أن يستخدم حمل 10 kgf فقط"],
+            correct: 2,
+            explanation: "يُستخدم مقياس HRC للمواد الصلدة بحيث لا تقل القراءة عن 20 HRC لتجنب تلف المخروط الماسي."
+          },
+          {
+            type: "مسألة حسابية",
+            text: "عمود ميكانيكي مصنوع من صلب إجهاد خضوعه (σ_yield = 450 MPa)، وصُمم ليتحمل إجهاد تشغيل فعلي (150 MPa). كم يبلغ معامل الأمان (F.S)؟",
+            options: ["0.33", "300", "1.5", "3.0"],
+            correct: 3,
+            explanation: "معامل الأمان F.S = إجهاد الخضوع / إجهاد التشغيل = 450 / 150 = 3.0."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "متى نستخدم الرمز HBW بدلاً من HBS في اختبار صلادة برينيل؟",
+            options: ["عند استخدام كرة فولاذية للعينات اللينة", "عند استخدام كرة من كربيد التنجستن للعينات عالية الصلادة (حتى 650 HB)", "عند استخدام مخروط ماسي", "عند اختبار البلاستيك فقط"],
+            correct: 1,
+            explanation: "HBS تعني كرة فولاذية (Steel) حتى 450 HB، بينما HBW تعني كرة كربيد التنجستن (Tungsten Carbide) حتى 650 HB."
+          }
+        ]
+      },
+      {
+        id: 6,
+        title: "الاختبارات اللا إتلافية وANSYS",
+        topic: "NDT & Finite Element Analysis",
+        icon: "📡",
+        questions: [
+          {
+            type: "اختيار من متعدد",
+            text: "أي اختبار لا إتلافي (NDT) مناسب لكشف الشروخ السطحية وتحت السطحية في أجزاء من الصلب (مادة مغناطيسية)؟",
+            options: ["اختبار السوائل المتغلغلة (PT)", "اختبار الشد", "اختبار الجسيمات المغناطيسية (Magnetic Particle - MT)", "اختبار الكلل"],
+            correct: 2,
+            explanation: "الجسيمات المغناطيسية (MT) سريعة ودقيقة لكشف العيوب السطحية وتحت السطحية في المواد المغناطيسية فقط."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "ما هو العيب الرئيسي لاختبار السوائل المتغلغلة (Liquid Penetrant Testing - PT)؟",
+            options: ["يحتاج تياراً كهربائياً عالياً", "يكشف العيوب المفتوحة على السطح فقط ولا يصلح للمواد المسامية", "يكشف العيوب الداخلية العميقة فقط", "يؤدي إلى كسر العينة"],
+            correct: 1,
+            explanation: "يعتمد PT على الخاصية الشعرية لدخول السائل في الشروخ السطحية المفتوحة، لذا لا يكشف العيوب الداخلية المغلقة."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "في برامج المحاكاة الهندسية مثل ANSYS (تحليل العناصر المحددة FEA)، ماذا تسمى عملية تقسيم النموذج إلى عناصر صغيرة مترابطة؟",
+            options: ["السباكة (Casting)", "التلدين (Annealing)", "الخراطة (Turning)", "توليد الشبكة (Meshing)"],
+            correct: 3,
+            explanation: "عملية Meshing تقسم الجسم الهندسي المعقد إلى عدد كبير من العناصر (Elements) والعقد (Nodes) لحل المعادلات."
+          },
+          {
+            type: "صواب أم خطأ",
+            text: "صواب أم خطأ: يمكن استخدام الموجات فوق الصوتية (UT) والأشعة السينية (RT) للكشف عن الفجوات والشروخ الداخلية العميقة داخل المسبوكات واللحامات.",
+            options: ["خطأ — يكشفان العيوب السطحية فقط", "صواب — كلاهما يكشف العيوب الداخلية دون إتلاف القطعة"],
+            correct: 1,
+            explanation: "الموجات فوق الصوتية (UT) والأشعة السينية (RT) هما الأداتان الأساسيتان للفحص الحجمي والداخلي للمنتجات."
+          }
+        ]
+      },
+      {
+        id: 7,
+        title: "سباكة المعادن (Metal Casting)",
+        topic: "قوالب الرمل، الصاعد، والسباكة الخاصة",
+        icon: "🌋",
+        questions: [
+          {
+            type: "اختيار من متعدد",
+            text: "ما هي النسب القياسية لمكونات خلطة رمل السباكة (السيليكا، الطفلة، الماء)؟",
+            svg: SVGs.sandCasting,
+            options: ["70% رمل سيليكا + 20% طفلة + 10% ماء", "50% رمل + 50% ماء", "90% رمل سيليكا + 7% طفلة + 3% ماء", "80% طفلة + 15% رمل + 5% زيت"],
+            correct: 2,
+            explanation: "تتكون خلطة رمل السباكة القياسية من 90% رمل سيليكا لتحمل الحرارة، 7% طفلة للتماسك، و3% ماء لتفعيل الطفلة."
+          },
+          {
+            type: "تحليل رسم هندسي",
+            text: "ما هي الوظيفة الأساسية للصاعد (Riser) الموضح في رسم قالب السباكة؟",
+            svg: SVGs.sandCasting,
+            options: ["فتحة لصب المعدن المنصهر من البوتقة", "خزان معدن منصهر يعوض الانكماش الحجمي أثناء تجمد المسبوك", "مجرى لتبريد الرمل بالماء", "تثبيت النصف العلوي بالسفلي"],
+            correct: 1,
+            explanation: "ينكمش المعدن أثناء التحول من الحالة السائلة للصلبة، فيقوم الصاعد (Riser) بتغذية المسبوك بالمعدن المنصهر لمنع فجوات الانكماش."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "أي طريقة سباكة تعتمد على القوة الطاردة المركزية لإنتاج مواسير وأسطوانات مجوفة دون الحاجة لدليك (Core)؟",
+            options: ["السباكة الرملية اليدوية", "السباكة بالقوالب القشرية", "الحدادة الحرة", "السباكة بالطرد المركزي (Centrifugal Casting)"],
+            correct: 3,
+            explanation: "في السباكة بالطرد المركزي يدور القالب بسرعة عالية فيُدفع المعدن المنصهر نحو الجدار الخارجي مشكلاً تجويفاً داخلياً منتظماً."
+          },
+          {
+            type: "صواب أم خطأ",
+            text: "صواب أم خطأ: يجب أن يتجمد الصاعد (Riser) قبل تجمد المسبوك لضمان نجاح عملية السباكة.",
+            options: ["صواب — يتجمد أولاً", "خطأ — يجب أن يتجمد الصاعد بعد المسبوك ليظل قادراً على تغذيته"],
+            correct: 1,
+            explanation: "إذا تجمد الصاعد قبل المسبوك فلن يستطيع إمداده بالمعدن السائل وستظهر فجوات انكماش داخل المنتج."
+          }
+        ]
+      },
+      {
+        id: 8,
+        title: "التشكيل اللدن واللحام",
+        topic: "Forming & Welding Processes",
+        icon: "⚡",
+        questions: [
+          {
+            type: "اختيار من متعدد",
+            text: "ما هي عملية التشكيل التي يُدفع فيها المعدن تحت ضغط عالٍ ليمر خلال فتحة قالب (Die) لإنتاج قضبان ومقاطع معقدة كقطاعات الألومنيوم؟",
+            options: ["الدرفلة (Rolling)", "البثق (Extrusion)", "الثني (Bending)", "السباكة (Casting)"],
+            correct: 1,
+            explanation: "البثق (Extrusion) هو دفع المعدن خلال فتحة قالب ذي مقطع محدد لإنتاج مقاطع ثابتة المقطع العرضي."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "لماذا يحتاج البثق غير المباشر (Indirect Extrusion) إلى قوة أقل من البثق المباشر؟",
+            options: ["لأن المعدن يكون منصهراً تماماً", "لأن القالب يدور بسرعة عالية", "لعدم وجود حركة نسبية واحتكاك بين كتلة المعدن وجدار الحاوية", "لعدم استخدام أي ضغط"],
+            correct: 2,
+            explanation: "في البثق غير المباشر يتحرك القالب نحو المعدن الساكن، فيختفي الاحتكاك بين المعدن وجدار الحاوية وتنخفض القوة المطلوبة."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "في لحام المقاومة الكهربائية (Spot / Resistance Welding)، كيف تتولد الحرارة اللازمة لصهر منطقة التلامس؟",
+            options: ["من احتراق غاز الأسيتيلين والأكسجين", "من أشعة الليزر فقط", "من الاحتكاك الميكانيكي بدون كهرباء", "من مقاومة الألواح المعدنية لمرور تيار كهربائي عالٍ (H = I² × R × t)"],
+            correct: 3,
+            explanation: "تتولد الحرارة وفق قانون جول H = I² R t عند سطح التلامس بين اللوحين تحت ضغط الأقطاب النحاسية."
+          },
+          {
+            type: "صواب أم خطأ",
+            text: "صواب أم خطأ: تُعطي الحدادة (Forging) متانة ومقاومة إجهادات أعلى من التشغيل بالقطع لأنها تحافظ على استمرارية خطوط سريان الألياف المعدنية (Grain Flow).",
+            options: ["خطأ — القطع يعطي متانة أعلى", "صواب — استمرارية الألياف تمنح المطروقات متانة فائقة"],
+            correct: 1,
+            explanation: "في التشغيل بالقطع تُقطع الألياف المعدنية مما يضعف القطعة، بينما في الحدادة تنحني الألياف مع شكل المنتج فتزداد متانته."
+          }
+        ]
+      },
+      {
+        id: 9,
+        title: "التشغيل بالقطع وقوانين الماكينات",
+        topic: "Turning, Milling, Drilling",
+        icon: "🛠️",
+        questions: [
+          {
+            type: "اختيار من متعدد",
+            text: "ما هو الفرق الحركي الأساسي بين الخراطة (Turning) والتفريز (Milling)؟",
+            options: ["في كليهما الشغلة ثابتة دائماً", "في الخراطة تدور السكينة متعددة الحدود", "في الخراطة تدور الشغلة ويتحرك القلم؛ أما في التفريز فتدور السكينة وتتحرك الشغلة", "لا يوجد فرق حركي بينهما"],
+            correct: 2,
+            explanation: "الخراطة تعتمد على دوران الشغلة وحركة خطية لقلم القطع، بينما التفريز يعتمد على دوران سكينة التفريز متعددة الحدود."
+          },
+          {
+            type: "مسألة حسابية",
+            text: "احسب سرعة القطع (V) عند خراطة عمود قطره D = 50 mm بسرعة دوران N = 400 rpm (اعتبر π ≈ 3.14):",
+            svg: SVGs.machiningGeom,
+            options: ["31.4 m/min", "62.8 m/min", "125.6 m/min", "20.0 m/min"],
+            correct: 1,
+            explanation: "V = (π × D × N) / 1000 = (3.14 × 50 × 400) / 1000 = 62800 / 1000 = 62.8 m/min."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "ما هي العملية التي تُجرى بعد التثقيب (Drilling) باستخدام أداة متعددة الحدود المستقيمة لتنعيم السطح الداخلي للثقب وضبط قطره بدقة عالية؟",
+            options: ["التخويش (Counterboring)", "القلوظة الخارجية", "الترترة (Knurling)", "البرغلة (Reaming)"],
+            correct: 3,
+            explanation: "البرغلة (Reaming) تزيل طبقة رقيقة جداً من جدار الثقب لتحسين دقة الأبعاد وجودة التشطيب السطحي."
+          },
+          {
+            type: "صواب أم خطأ",
+            text: "صواب أم خطأ: تُستخدم عملية التجليخ (Grinding) كعملية تشطيب نهائي للمعادن المقساة (الصلدة) وتعطي نعومة سطح عالية جداً.",
+            options: ["خطأ — التجليخ للمعادن اللينة فقط", "صواب — حبيبات التجليخ الكاشطة تقطع المعادن شديدة الصلادة بدقة"],
+            correct: 1,
+            explanation: "حبيبات الجلخ (مثل أكسيد الألومنيوم وكربيد السيليكون) أصلد من الصلب المقسى، لذا تشغله بدقة متناهية."
+          }
+        ]
+      },
+      {
+        id: 10,
+        title: "مخطط التشغيل الـ 6 (Technological Procedure)",
+        topic: "تسلسل تصنيع المنتج خطوة بخطوة",
+        icon: "📋",
+        questions: [
+          {
+            type: "تحليل رسم هندسي",
+            text: "ما هو الهدف الهندسي من إعداد مخطط التشغيل (Technological Procedure) قبل بدء الإنتاج؟",
+            svg: SVGs.techProcedure,
+            options: ["حساب رواتب العمال فقط", "تحديد التسلسل المنطقي للعمليات والماكينات والعدد لتحويل الخامة المبدئية إلى منتج نهائي بأقل تكلفة", "رسم شعار المصنع", "اختيار ألوان طلاء المبنى"],
+            correct: 1,
+            explanation: "مخطط التشغيل هو خارطة الطريق الهندسية التي تحدد ترتيب العمليات، التثبيت، الماكينات، وأدوات القياس لكل مرحلة."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "ما هي الخطوة الأولى دائماً في مخطط التشغيل (Technological Procedure)؟",
+            options: ["التجليخ النهائي", "الفحص النهائي والتغليف", "تحديد أبعاد ونوع الخامة المبدئية (Stock Material Selection)", "التثقيب والقلوظة"],
+            correct: 2,
+            explanation: "نبدأ دائماً بتحديد الخامة المبدئية (Stock) بسماحات تشغيل مناسبة تتيح الوصول للأبعاد النهائية."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "لماذا تُؤجل عمليات التجليخ (Grinding) والفحص النهائي إلى الخطوات الأخيرة في مخطط التشغيل؟",
+            options: ["لأن ماكينة التجليخ أبطأ ماكينة", "لأن التجليخ يسبق الخراطة دائماً", "بدون سبب هندسي", "لحماية الأسطح فائقة النعومة من الخدش والتشوه أثناء عمليات التشغيل الخشنة والمعالجة الحرارية"],
+            correct: 3,
+            explanation: "المعالجة الحرارية قد تسبب انحرافاً طفيفاً في الأبعاد، لذا يأتي التجليخ بعدها في النهاية لضبط الأبعاد والنعومة النهائية."
+          },
+          {
+            type: "صواب أم خطأ",
+            text: "صواب أم خطأ: في مخطط التشغيل، يفضل إجراء عمليات التثقيب (Drilling) والقلوظة قبل المعالجة الحرارية للتقسية (Hardening).",
+            options: ["خطأ — نثقب بعد التقسية دائماً", "صواب — لأن تشغيل المعدن قبل تقسيته أسهل ويحمي البنط والذكور من الكسر"],
+            correct: 1,
+            explanation: "بعد التقسية يصبح المعدن شديد الصلادة ويصعب تثقيبه أو قلوظته بالعدد التقليدية."
+          }
+        ]
+      },
+      {
+        id: 11,
+        title: "العدد اليدوية ومعدات القياس الهندسي",
+        topic: "القدمة ذات الورنية والميكرومتر",
+        icon: "📏",
+        questions: [
+          {
+            type: "تحليل رسم هندسي",
+            text: "في الشكل التوضيحي للقدمة ذات الورنية، إذا كان صفر الورنية بعد شرطة 24 mm، وانطبقت الشرطة الثامنة (دقة 0.05 mm)، فما هي القراءة الصحيحة؟",
+            svg: SVGs.vernierMicro,
+            options: ["24.08 mm", "24.80 mm", "24.40 mm", "25.40 mm"],
+            correct: 2,
+            explanation: "القراءة = 24 + (8 × 0.05) = 24 + 0.40 = 24.40 mm."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "ما هي دقة القياس القياسية للميكرومتر المتري (Micrometer) الذي خطوة قلاووظه 0.5 mm وجلبته مقسمة إلى 50 قسماً؟",
+            options: ["0.05 mm", "0.01 mm", "0.10 mm", "0.50 mm"],
+            correct: 1,
+            explanation: "دقة الميكرومتر = خطوة القلاووظ / عدد أقسام الجلبة = 0.5 / 50 = 0.01 mm."
+          },
+          {
+            type: "اختيار من متعدد",
+            text: "ما هي القياسات الثلاثة التي تستطيع القدمة ذات الورنية (Vernier Caliper) قياسها في آنٍ واحد؟",
+            options: ["درجة الحرارة، الضغط، والرطوبة", "الصلادة، المتانة، والمرونة", "الوزن، الكثافة، والحجم", "الأقطار الخارجية، الأقطار الداخلية، والأعماق"],
+            correct: 3,
+            explanation: "تحتوي الورنية على فكين سفليين للقياسات الخارجية، فكين علويين للقياسات الداخلية، وساق منزلقة لقياس الأعماق."
+          },
+          {
+            type: "صواب أم خطأ",
+            text: "صواب أم خطأ: يُستخدم الفرجار الداخلي (Inside Caliper) لقياس الأبعاد مباشرة بالأرقام دون الحاجة لمسطرة مدرجة.",
+            options: ["صواب — يحتوي على شاشة رقمية دائماً", "خطأ — الفرجار أداة نقل قياس غير مباشرة ويحتاج لمسطرة أو ميكرومتر لقراءة القيمة"],
+            correct: 1,
+            explanation: "الفرجار البسيط (Calipers) ينقل البعد فقط ويُقارن بمسطرة مدرجة، بخلاف القدمة ذات الورنية."
+          }
+        ]
+      },
+      {
+        id: 12,
+        title: "مختبر مسائل وقوانين بنك الأسئلة",
+        topic: "تطبيقات حسابية وصواب وخطأ من البنك",
+        icon: "🧮",
+        questions: [
+          {
+            type: "مسألة حسابية (تثقيب)",
+            text: "مطلوب تثقيب ثقب نافذ في لوح سمكه L = 24 mm باستخدام بنطة قطرها D = 20 mm، بسرعة دوران N = 500 rpm وتغذية f = 0.2 mm/rev. كم يبلغ زمن التثقيب؟ (علماً بأن A = 0.3 D)",
+            svg: SVGs.machiningGeom,
+            options: ["0.24 دقيقة", "0.30 دقيقة (18 ثانية)", "0.50 دقيقة", "1.20 دقيقة"],
+            correct: 1,
+            explanation: "A = 0.3 × 20 = 6 mm. الطول الكلي = 24 + 6 = 30 mm. الزمن T = 30 / (0.2 × 500) = 30 / 100 = 0.30 دقيقة (18 ثانية)."
+          },
+          {
+            type: "مسألة حسابية (تفريز)",
+            text: "سكينة تفريز عدد أسنانها Z = 8 أسنان، تدور بسرعة N = 250 rpm، وتغذية السنة الواحدة f_z = 0.05 mm/tooth. كم تبلغ التغذية الدقيقة للطاولة (f_m)؟",
+            options: ["50 mm/min", "200 mm/min", "100 mm/min", "12.5 mm/min"],
+            correct: 2,
+            explanation: "التغذية الدقيقة f_m = f_z × Z × N = 0.05 × 8 × 250 = 100 mm/min."
+          },
+          {
+            type: "مسألة حسابية (برينيل)",
+            text: "في اختبار صلادة برينيل، إذا ضُوعف الحمل المؤثر (F) مع ثبات قطر الكرة (D) وقطر الأثر (d) نظرياً، ماذا يحدث لقيمة رقم صلادة برينيل (HB) في المعادلة؟",
+            options: ["تقل إلى النصف", "تظل ثابتة لا تتغير", "تتضاعف أربع مرات", "تتضاعف قيمة HB لأنها تتناسب طردياً مع الحمل F"],
+            correct: 3,
+            explanation: "من معادلة برينيل HB = 2F / [πD(D - √(D² - d²))] يتضح أن HB تتناسب طردياً مع الحمل F في البسط."
+          },
+          {
+            type: "صواب أم خطأ (بنك الأسئلة)",
+            text: "صواب أم خطأ: في السباكة الرملية، يتكون رمل القالب القياسي من 90% طفلة و7% رمل سيليكا و3% ماء.",
+            options: ["صواب — 90% طفلة", "خطأ — العكس: 90% رمل سيليكا، 7% طفلة (بنتونيت)، و3% ماء"],
+            correct: 1,
+            explanation: "رمل السيليكا هو المكون الأساسي بنسبة 90% لتحمل درجات انصهار المعادن، والطفلة 7% كمادة رابطة."
+          },
+          {
+            type: "مسألة حسابية (تخطيط مصانع)",
+            text: "إذا كان الطلب السنوي D = 1000 وحدة، وتكلفة الإعداد C_setup = 200 جنيه، وتكلفة التخزين للوحدة C_holding = 4 جنيه، فكم تبلغ الكمية الاقتصادية المثلى (N_OPT)؟",
+            options: ["500 وحدة", "316 وحدة تقريباً (√100,000)", "100 وحدة", "1000 وحدة"],
+            correct: 1,
+            explanation: "N_OPT = √[(2 × 1000 × 200) / 4] = √100,000 ≈ 316.2 وحدة."
+          }
+        ]
+      },
+      {
+        id: 13,
+        title: "التحدي النهائي الشامل (Grand Master Challenge)",
+        topic: "اختبار المهندس المحترف — شهادة الإنجاز",
+        icon: "👑",
+        isBoss: true,
+        questions: [
+          {
+            type: "تحدي شامل 1",
+            text: "ما هو الترتيب الصحيح من الأعلى صلادة إلى الأقل صلادة عند معالجة الصلب الكربوني حرارياً؟",
+            options: ["التلدين > التطبيع > التقسية", "التطبيع > التلدين > التقسية", "التقسية (Quenching) > التطبيع (Normalizing) > التلدين (Annealing)", "جميعها تعطي نفس الصلادة"],
+            correct: 2,
+            explanation: "التبريد المفاجئ في التقسية يعطي أعلى صلادة (مارتنسيت)، يليه التبريد الهوائي في التطبيع، ثم التبريد البطيء في التلدين."
+          },
+          {
+            type: "تحدي شامل 2",
+            text: "للحصول على أقصى دقة أبعاد وأنعم سطح لمسبوك معقد الشكل من سبيكة عالية الانصهار، ما هي أفضل طريقة سباكة؟",
+            options: ["السباكة الرملية اليدوية", "السباكة الاستثمارية / الشمع المفقود (Investment Casting)", "السباكة في قوالب مفتوحة", "الحدادة الحرة"],
+            correct: 1,
+            explanation: "السباكة الاستثمارية تستخدم نموذج شمعي يغلف بالسيراميك مما يعطي سطحاً أملس وتفاصيل دقيقة جداً."
+          },
+          {
+            type: "تحدي شامل 3",
+            text: "إذا كانت قراءة الميكرومتر 12.50 mm على الجلبة الثابتة، وانطبق الخط رقم 28 على الجلبة الدوارة، فكم تبلغ القراءة الكلية؟",
+            options: ["12.28 mm", "15.30 mm", "12.528 mm", "12.78 mm"],
+            correct: 3,
+            explanation: "القراءة الكلية = 12.50 + (28 × 0.01) = 12.50 + 0.28 = 12.78 mm."
+          },
+          {
+            type: "تحدي شامل 4",
+            text: "أي من الاختبارات التالية يجمع بين كونه اختباراً لا إتلافياً (NDT) ويصلح لفحص العيوب الداخلية في الألومنيوم (غير المغناطيسي)؟",
+            options: ["الجسيمات المغناطيسية (MT)", "السوائل المتغلغلة (PT)", "الموجات فوق الصوتية (UT) أو الأشعة السينية (RT)", "اختبار برينيل (HBW)"],
+            correct: 2,
+            explanation: "الألومنيوم غير مغناطيسي (فلا يصلح له MT)، والسوائل المتغلغلة تكشف السطح فقط، لذا نستخدم UT أو RT للداخل."
+          },
+          {
+            type: "تحدي شامل 5",
+            text: "في خطة التشغيل (Technological Procedure)، ما النسبة التقريبية للوقت الفعلي الذي يقضيه المنتج على الماكينة من إجمالي زمن تواجده بالمصنع؟",
+            svg: SVGs.timeChart,
+            options: ["45% على الماكينة", "5% فقط على الماكينة", "75% على الماكينة", "95% على الماكينة"],
+            correct: 1,
+            explanation: "95% من الوقت يذهب للنقل والانتظار، و5% فقط يقضيه المنتج على الماكينة!"
+          }
+        ]
+      }
+    ];
+
+    // ==================== 6. حالة التطبيق والتخزين المحلي ====================
+    let state = {
+      xp: 0,
+      score: 0,
+      streak: 0,
+      hearts: 3,
+      completedStages: {},
+      unlockAll: false,
+      currentFcIndex: 0,
+      filteredFc: [...flashcardsData],
+      selectedCategory: 'الكل',
+      isFlipped: false,
+      activeStage: null,
+      currentQIndex: 0,
+      stageScore: 0,
+      stageCorrectCount: 0,
+      answeredCurrent: false,
+      currentShuffledOptions: [],
+      currentCorrectIndex: 0,
+      lastCorrectLetterIndex: -1
+    };
+
+    try {
+      const saved = localStorage.getItem('smartFactoryState_v4');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state.xp = parsed.xp || 0;
+        state.score = parsed.score || 0;
+        state.hearts = typeof parsed.hearts === 'number' ? parsed.hearts : 3;
+        state.completedStages = parsed.completedStages || {};
+        state.unlockAll = parsed.unlockAll || false;
+      }
+    } catch (e) {}
+
+    function saveState() {
+      try {
+        localStorage.setItem('smartFactoryState_v4', JSON.stringify({
+          xp: state.xp,
+          score: state.score,
+          hearts: state.hearts,
+          completedStages: state.completedStages,
+          unlockAll: state.unlockAll
+        }));
+      } catch (e) {}
+    }
+
+    // ==================== 7. تحديث المؤشرات العلوية والقلوب الثلاثة ====================
+    function renderHeartsString(heartsCount) {
+      const full = Math.max(0, Math.min(3, heartsCount));
+      const empty = 3 - full;
+      return '❤️'.repeat(full) + '🖤'.repeat(empty);
+    }
+
+    function updateHeaderStats() {
+      document.getElementById('header-xp').textContent = `${state.xp} XP`;
+      document.getElementById('header-score').textContent = state.score;
+      document.getElementById('header-streak').textContent = state.streak;
+
+      const heartsStr = renderHeartsString(state.hearts);
+      const headerHeartsEl = document.getElementById('header-hearts');
+      if (headerHeartsEl) headerHeartsEl.textContent = heartsStr;
+
+      const quizHeartsEl = document.getElementById('quiz-hearts-display');
+      if (quizHeartsEl) quizHeartsEl.textContent = heartsStr;
+
+      let rank = "مهندس متدرب";
+      if (state.xp >= 1200) rank = "كبير مهندسي الإنتاج 👑";
+      else if (state.xp >= 700) rank = "مهندس تصنيع محترف ⚙️";
+      else if (state.xp >= 300) rank = "مهندس جودة وتشغيل 🛠️";
+      document.getElementById('header-level').textContent = rank;
+    }
+
+    // ==================== 8. منطق بطاقات المراجعة التفاعلية ====================
+    const filterPillColors = [
+      "from-cyan-500 to-blue-600",
+      "from-fuchsia-500 to-purple-600",
+      "from-pink-500 to-rose-600",
+      "from-amber-500 to-orange-600",
+      "from-emerald-500 to-teal-600",
+      "from-indigo-500 to-violet-600"
+    ];
+
+    function renderFlashcardFilters() {
+      const categories = ['الكل', ...new Set(flashcardsData.map(f => f.category))];
+      const container = document.getElementById('fc-filters');
+      container.innerHTML = categories.map((cat, idx) => {
+        const active = state.selectedCategory === cat;
+        const grad = filterPillColors[idx % filterPillColors.length];
+        return `
+          <button onclick="filterFlashcards('${cat}')"
+            class="px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition ${
+              active
+                ? `bg-gradient-to-r ${grad} text-white shadow-md scale-105`
+                : 'bg-slate-900/90 text-slate-200 hover:bg-slate-800 border border-purple-500/35'
+            }">
+            ${cat}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function filterFlashcards(category) {
+      playClick();
+      state.selectedCategory = category;
+      state.filteredFc = category === 'الكل'
+        ? [...flashcardsData]
+        : flashcardsData.filter(f => f.category === category);
+      state.currentFcIndex = 0;
+      state.isFlipped = false;
+      renderFlashcardFilters();
+      renderCurrentFlashcard();
+    }
+
+    function renderCurrentFlashcard() {
+      const card = state.filteredFc[state.currentFcIndex];
+      if (!card) return;
+
+      const inner = document.getElementById('fc-inner');
+      if (state.isFlipped) inner.classList.add('rotate-y-180');
+      else inner.classList.remove('rotate-y-180');
+
+      document.getElementById('fc-counter').textContent = `${state.currentFcIndex + 1} / ${state.filteredFc.length}`;
+      document.getElementById('fc-category-badge').textContent = card.category;
+      document.getElementById('fc-question').textContent = card.question;
+
+      const hintBox = document.getElementById('fc-hint-box');
+      hintBox.classList.add('hidden');
+      hintBox.textContent = `💡 تلميح: ${card.hint}`;
+
+      document.getElementById('fc-answer').innerHTML = card.answer.replace(/\n/g, '<br/>');
+      const formulaEl = document.getElementById('fc-formula');
+      if (card.formula) {
+        formulaEl.textContent = card.formula;
+        formulaEl.classList.remove('hidden');
+      } else {
+        formulaEl.classList.add('hidden');
+      }
+
+      document.getElementById('fc-svg-container').innerHTML = card.svg || '';
+    }
+
+    function flipFlashcard() {
+      playClick();
+      state.isFlipped = !state.isFlipped;
+      const inner = document.getElementById('fc-inner');
+      if (state.isFlipped) inner.classList.add('rotate-y-180');
+      else inner.classList.remove('rotate-y-180');
+    }
+
+    function toggleHint() {
+      playClick();
+      document.getElementById('fc-hint-box').classList.toggle('hidden');
+    }
+
+    function nextFlashcard() {
+      playClick();
+      state.isFlipped = false;
+      state.currentFcIndex = (state.currentFcIndex + 1) % state.filteredFc.length;
+      renderCurrentFlashcard();
+    }
+
+    function prevFlashcard() {
+      playClick();
+      state.isFlipped = false;
+      state.currentFcIndex = (state.currentFcIndex - 1 + state.filteredFc.length) % state.filteredFc.length;
+      renderCurrentFlashcard();
+    }
+
+    // ==================== 9. منطق نافذة ملخصات المحاضرات ====================
+    function openSummaryModal() {
+      playClick();
+      const modal = document.getElementById('summary-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      renderLectureList(1);
+    }
+
+    function closeSummaryModal() {
+      playClick();
+      const modal = document.getElementById('summary-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function renderLectureList(activeId) {
+      const listEl = document.getElementById('lecture-list');
+      listEl.innerHTML = lecturesSummaries.map(lec => {
+        const isActive = lec.id === activeId;
+        return `
+          <button onclick="selectLecture(${lec.id})"
+            class="w-full text-right p-3 rounded-2xl transition flex items-center justify-between gap-2 ${
+              isActive
+                ? 'bg-gradient-to-l from-pink-500/25 via-purple-500/25 to-cyan-500/25 border border-pink-400/65 text-white font-extrabold'
+                : 'bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 font-semibold'
+            }">
+            <span class="text-xs sm:text-sm leading-snug">${lec.title}</span>
+            <span class="text-cyan-300 text-xs shrink-0">⬅️</span>
+          </button>
+        `;
+      }).join('');
+
+      renderLectureContent(activeId);
+    }
+
+    function selectLecture(id) {
+      playClick();
+      renderLectureList(id);
+    }
+
+    function renderLectureContent(id) {
+      const lec = lecturesSummaries.find(l => l.id === id) || lecturesSummaries[0];
+      const container = document.getElementById('printable-summary');
+
+      const pointsHtml = lec.points.map(p => `
+        <li class="flex items-start gap-2.5 text-xs sm:text-sm text-slate-100 leading-relaxed bg-slate-800/75 p-3 rounded-2xl border border-purple-500/25">
+          <span class="text-pink-400 font-bold mt-0.5">◆</span>
+          <span>${p}</span>
+        </li>
+      `).join('');
+
+      const formulasHtml = lec.formulas.map(f => `
+        <div class="px-4 py-2.5 rounded-xl bg-slate-950 border border-amber-400/50 text-amber-300 font-mono text-xs sm:text-sm text-center dir-ltr">
+          ${f}
+        </div>
+      `).join('');
+
+      const tableHtml = lec.table ? `
+        <div class="overflow-x-auto rounded-2xl border border-purple-500/35">
+          <table class="w-full text-right text-xs sm:text-sm">
+            <thead class="bg-gradient-to-r from-indigo-950 to-purple-950 text-cyan-300">
+              <tr>
+                ${lec.table.headers.map(h => `<th class="p-3 font-extrabold">${h}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 bg-slate-900/75">
+              ${lec.table.rows.map(row => `
+                <tr>
+                  ${row.map((cell, idx) => `<td class="p-3 ${idx === 0 ? 'font-bold text-white' : 'text-slate-200'}">${cell}</td>`).join('')}
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      ` : '';
+
+      container.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-500/30 pb-3">
+            <div>
+              <span class="px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold">${lec.badge}</span>
+              <h3 class="text-lg sm:text-xl font-black text-white mt-1">${lec.title}</h3>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+            <div class="lg:col-span-7 space-y-2">
+              <h5 class="text-xs font-extrabold text-amber-300">📐 أهم القوانين والمعادلات الهندسية:</h5>
+              <div class="space-y-2">${formulasHtml}</div>
+            </div>
+            <div class="lg:col-span-5 bg-slate-950/85 p-3 rounded-2xl border border-cyan-400/35 flex items-center justify-center">
+              ${lec.svg}
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="text-xs font-extrabold text-cyan-300">📌 النقاط الجوهرية والملخص المركز:</h5>
+            <ul class="space-y-2">${pointsHtml}</ul>
+          </div>
+
+          ${tableHtml ? `<div class="space-y-2"><h5 class="text-xs font-extrabold text-emerald-300">📊 جدول مقارنة سريع:</h5>${tableHtml}</div>` : ''}
+        </div>
+      `;
+    }
+
+    // ==================== 10. منطق مراحل تحدي المصنع الـ 12 + التحدي النهائي ====================
+    function toggleUnlockAll() {
+      playClick();
+      state.unlockAll = !state.unlockAll;
+      saveState();
+      renderStages();
+      showToast(state.unlockAll ? '🔓 تم فتح جميع المراحل للمراجعة الحرة!' : '🔒 تم تفعيل التدرج التسلسلي للمراحل.');
+    }
+
+    function notifyLocked() {
+      playError();
+      showToast('🔒 أكمل المرحلة السابقة أولاً أو اضغط على زر "فتح جميع المراحل" بالأعلى!');
+    }
+
+    function notifyBossLocked() {
+      playError();
+      showToast('👑 أكمل المراحل الـ 12 أولاً لفتح التحدي النهائي الشامل!');
+    }
+
+    function renderStages() {
+      const grid = document.getElementById('stages-grid');
+      const bossContainer = document.getElementById('final-boss-container');
+
+      const completedCount = Object.keys(state.completedStages).length;
+      document.getElementById('stages-progress-text').textContent = `${completedCount} / ${stagesData.length}`;
+      const percent = Math.round((completedCount / stagesData.length) * 100);
+      document.getElementById('overall-progress-bar').style.width = `${percent}%`;
+
+      document.getElementById('unlock-all-btn').textContent = state.unlockAll
+        ? '🔒 تفعيل التدرج التسلسلي للمراحل'
+        : '🔓 فتح جميع المراحل للمراجعة الحرة';
+
+      const regularStages = stagesData.filter(s => !s.isBoss);
+      const bossStage = stagesData.find(s => s.isBoss);
+
+      grid.innerHTML = regularStages.map((stage, index) => {
+        const isCompleted = !!state.completedStages[stage.id];
+        const stars = state.completedStages[stage.id] || 0;
+        const prevCompleted = index === 0 || !!state.completedStages[regularStages[index - 1].id];
+        const isUnlocked = state.unlockAll || prevCompleted || isCompleted;
+        const theme = stageColorThemes[index % stageColorThemes.length];
+
+        return `
+          <div onclick="${isUnlocked ? `startStage(${stage.id})` : 'notifyLocked()'}"
+            class="group relative rounded-3xl p-5 border-2 transition-all duration-300 flex flex-col justify-between gap-4 ${
+              isUnlocked
+                ? `cursor-pointer bg-gradient-to-br ${theme.cardBg} ${theme.border} hover:-translate-y-1.5 shadow-xl`
+                : 'cursor-not-allowed bg-slate-900/50 border-slate-800/80 opacity-65'
+            }">
+            
+            <div class="flex items-start justify-between gap-2">
+              <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-xl shadow-md ${
+                isUnlocked
+                  ? `bg-gradient-to-br ${theme.iconBg} text-white`
+                  : 'bg-slate-800 border border-slate-700'
+              }">
+                ${isUnlocked ? stage.icon : '🔒'}
+              </div>
+              <div class="text-left">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+                  isUnlocked ? theme.badge : 'bg-slate-800 text-slate-500'
+                }">
+                  مرحلة ${stage.id}
+                </span>
+                <div class="text-amber-300 text-xs mt-1 tracking-widest">
+                  ${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <h4 class="text-base font-extrabold text-white group-hover:text-amber-200 transition leading-snug">
+                ${stage.title}
+              </h4>
+              <p class="text-xs text-slate-300">${stage.topic}</p>
+            </div>
+
+            <div class="pt-2 border-t border-white/10 flex items-center justify-between text-xs font-bold">
+              <span class="text-slate-300">${stage.questions.length} أسئلة</span>
+              <span class="${isCompleted ? 'text-emerald-300' : isUnlocked ? theme.accent : 'text-slate-500'}">
+                ${isCompleted ? 'إعادة التحدي ↻' : isUnlocked ? 'ابدأ المرحلة ⬅️' : 'مغلقة'}
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (bossStage) {
+        const bossCompleted = !!state.completedStages[bossStage.id];
+        const all12Done = regularStages.every(s => !!state.completedStages[s.id]);
+        const bossUnlocked = state.unlockAll || all12Done || bossCompleted;
+
+        bossContainer.innerHTML = `
+          <div onclick="${bossUnlocked ? `startStage(${bossStage.id})` : 'notifyBossLocked()'}"
+            class="rounded-3xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col md:flex-row items-center justify-between gap-5 ${
+              bossUnlocked
+                ? 'cursor-pointer bg-gradient-to-r from-fuchsia-950/95 via-purple-950/90 to-amber-950/85 border-amber-400/85 hover:border-pink-300 shadow-2xl glow-rainbow'
+                : 'cursor-not-allowed bg-slate-900/70 border-slate-800 opacity-75'
+            }">
+            <div class="flex items-center gap-4 text-center md:text-right flex-col md:flex-row">
+              <div class="w-16 h-16 rounded-3xl bg-gradient-to-br from-amber-400 via-pink-500 to-purple-600 flex items-center justify-center text-3xl shadow-lg shrink-0">
+                ${bossUnlocked ? '👑' : '🔒'}
+              </div>
+              <div class="space-y-1">
+                <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-gradient-to-r from-amber-500/25 to-pink-500/25 border border-amber-400/45 text-amber-200 text-xs font-extrabold">
+                  <span>المرحلة 13 — التحدي الختامي الملكي</span>
+                </div>
+                <h4 class="text-xl sm:text-2xl font-black text-white">${bossStage.title}</h4>
+                <p class="text-xs sm:text-sm text-slate-200">
+                  اختبار شامل يجمع أصعب أسئلة المنهج وبنك الأسئلة للحصول على شهادة مهندس الإنتاج الذكي المعتمدة.
+                </p>
+              </div>
+            </div>
+
+            <div class="shrink-0 w-full md:w-auto">
+              <button class="w-full md:w-auto px-6 py-3.5 rounded-2xl font-black text-sm transition ${
+                bossUnlocked
+                  ? 'bg-gradient-to-r from-amber-400 via-orange-500 to-pink-500 text-slate-950 shadow-lg hover:scale-105'
+                  : 'bg-slate-800 text-slate-400'
+              }">
+                ${bossCompleted ? 'إعادة التحدي النهائي 👑' : bossUnlocked ? 'دخول التحدي النهائي 🚀' : 'أكمل المراحل الـ 12 أولاً 🔒'}
+              </button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // ==================== 11. منطق نافذة الاختبار + خلط الإجابات الذكي + نظام القلوب الثلاثة ====================
+    function startStage(stageId) {
+      playClick();
+      if (state.hearts <= 0) {
+        openRechargeHeartsModal();
+        return;
+      }
+
+      const stage = stagesData.find(s => s.id === stageId);
+      if (!stage) return;
+
+      state.activeStage = stage;
+      state.currentQIndex = 0;
+      state.stageScore = 0;
+      state.stageCorrectCount = 0;
+      state.answeredCurrent = false;
+      state.lastCorrectLetterIndex = -1;
+
+      document.getElementById('quiz-stage-badge').textContent = stage.isBoss ? '👑 التحدي النهائي الشامل' : `المرحلة ${stage.id} من 12`;
+      document.getElementById('quiz-stage-title').textContent = stage.title;
+      document.getElementById('quiz-stage-score').textContent = '0';
+      updateHeaderStats();
+
+      const modal = document.getElementById('quiz-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      renderQuizQuestion();
+    }
+
+    function closeQuizModal() {
+      playClick();
+      const modal = document.getElementById('quiz-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // خوارزمية خلط ذكية تضمن عدم تكرار نفس موضع الإجابة الصحيحة (أ، ب، ج، د) وتمنع بقاءها في أ دائماً
+    function prepareSmartShuffledOptions(q) {
+      const indexed = q.options.map((text, idx) => ({
+        text,
+        isCorrect: idx === q.correct
+      }));
+
+      if (indexed.length === 2) {
+        const correctItem = indexed.find(i => i.isCorrect);
+        const wrongItem = indexed.find(i => !i.isCorrect);
+        if (state.lastCorrectLetterIndex === 0) return [wrongItem, correctItem];
+        if (state.lastCorrectLetterIndex === 1) return [correctItem, wrongItem];
+        return Math.random() < 0.5 ? [correctItem, wrongItem] : [wrongItem, correctItem];
+      }
+
+      let shuffled = [...indexed];
+      let attempts = 0;
+      do {
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        attempts++;
+      } while (
+        shuffled.findIndex(item => item.isCorrect) === state.lastCorrectLetterIndex &&
+        attempts < 12
+      );
+
+      return shuffled;
+    }
+
+    const optionBadgeColors = [
+      "bg-cyan-500/25 border-cyan-400/60 text-cyan-200",
+      "bg-fuchsia-500/25 border-fuchsia-400/60 text-fuchsia-200",
+      "bg-amber-500/25 border-amber-400/60 text-amber-200",
+      "bg-emerald-500/25 border-emerald-400/60 text-emerald-200"
+    ];
+
+    function renderQuizQuestion() {
+      const stage = state.activeStage;
+      const q = stage.questions[state.currentQIndex];
+      state.answeredCurrent = false;
+
+      const total = stage.questions.length;
+      document.getElementById('quiz-q-counter').textContent = `${state.currentQIndex + 1} / ${total}`;
+      document.getElementById('quiz-progress-bar').style.width = `${((state.currentQIndex + 1) / total) * 100}%`;
+
+      document.getElementById('quiz-type-tag').textContent = q.type;
+      document.getElementById('quiz-question-text').textContent = q.text;
+
+      const svgBox = document.getElementById('quiz-svg-box');
+      if (q.svg) {
+        svgBox.innerHTML = q.svg;
+        svgBox.classList.remove('hidden');
+      } else {
+        svgBox.innerHTML = '';
+        svgBox.classList.add('hidden');
+      }
+
+      const feedback = document.getElementById('quiz-feedback');
+      feedback.classList.add('hidden');
+
+      const nextBtn = document.getElementById('quiz-next-btn');
+      nextBtn.classList.add('hidden');
+      nextBtn.textContent = state.currentQIndex === total - 1 ? 'إنهاء المرحلة وعرض النتيجة 🏆' : 'السؤال التالي ⬅️';
+
+      const prepared = prepareSmartShuffledOptions(q);
+      state.currentShuffledOptions = prepared;
+      state.currentCorrectIndex = prepared.findIndex(item => item.isCorrect);
+      state.lastCorrectLetterIndex = state.currentCorrectIndex;
+
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = prepared.map((optObj, idx) => `
+        <button onclick="selectQuizOption(${idx})" id="opt-btn-${idx}"
+          class="w-full text-right p-4 rounded-2xl bg-slate-800/90 hover:bg-purple-950/70 border-2 border-slate-700/90 hover:border-fuchsia-400/75 text-slate-100 font-bold text-xs sm:text-sm transition flex items-center gap-3">
+          <span class="w-8 h-8 rounded-xl border flex items-center justify-center font-extrabold shrink-0 ${optionBadgeColors[idx % optionBadgeColors.length]}">
+            ${['أ', 'ب', 'ج', 'د'][idx] || idx + 1}
+          </span>
+          <span class="leading-relaxed">${optObj.text}</span>
+        </button>
+      `).join('');
+    }
+
+    function selectQuizOption(selectedIdx) {
+      if (state.answeredCurrent) return;
+      state.answeredCurrent = true;
+
+      const q = state.activeStage.questions[state.currentQIndex];
+      const correctIdx = state.currentCorrectIndex;
+      const isCorrect = selectedIdx === correctIdx;
+
+      state.currentShuffledOptions.forEach((_, idx) => {
+        const btn = document.getElementById(`opt-btn-${idx}`);
+        btn.disabled = true;
+        btn.classList.remove('hover:bg-purple-950/70', 'hover:border-fuchsia-400/75');
+
+        if (idx === correctIdx) {
+          btn.classList.remove('bg-slate-800/90', 'border-slate-700/90');
+          btn.classList.add('bg-emerald-950/95', 'border-emerald-400', 'text-emerald-200');
+        } else if (idx === selectedIdx && !isCorrect) {
+          btn.classList.remove('bg-slate-800/90', 'border-slate-700/90');
+          btn.classList.add('bg-rose-950/95', 'border-rose-500', 'text-rose-200');
+        } else {
+          btn.classList.add('opacity-50');
+        }
+      });
+
+      const feedback = document.getElementById('quiz-feedback');
+      const fbTitle = document.getElementById('quiz-feedback-title');
+      const fbExp = document.getElementById('quiz-feedback-explanation');
+
+      feedback.classList.remove('hidden', 'bg-emerald-950/75', 'border-emerald-400/65', 'bg-rose-950/75', 'border-rose-500/65');
+
+      if (isCorrect) {
+        playSuccess();
+        state.streak += 1;
+        const gained = 25 + Math.min(state.streak * 5, 25);
+        state.stageScore += gained;
+        state.score += gained;
+        state.xp += 30;
+        state.stageCorrectCount += 1;
+
+        feedback.classList.add('bg-emerald-950/75', 'border-emerald-400/65');
+        fbTitle.className = 'font-extrabold text-sm sm:text-base text-emerald-300';
+        fbTitle.textContent = `✅ إجابة هندسية صحيحة! (+${gained} نقطة)`;
+      } else {
+        playError();
+        state.streak = 0;
+        state.hearts = Math.max(0, state.hearts - 1);
+
+        const heartsPill = document.getElementById('quiz-hearts-pill');
+        if (heartsPill) {
+          heartsPill.classList.remove('shake-heart');
+          void heartsPill.offsetWidth;
+          heartsPill.classList.add('shake-heart');
+        }
+
+        feedback.classList.add('bg-rose-950/75', 'border-rose-500/65');
+        fbTitle.className = 'font-extrabold text-sm sm:text-base text-rose-300';
+        fbTitle.textContent = `❌ إجابة غير دقيقة! خسرت قلباً واحداً (المتبقي: ${renderHeartsString(state.hearts)})`;
+      }
+
+      fbExp.textContent = q.explanation;
+      document.getElementById('quiz-stage-score').textContent = state.stageScore;
+      updateHeaderStats();
+      saveState();
+
+      if (!isCorrect && state.hearts <= 0) {
+        setTimeout(() => {
+          openRechargeHeartsModal();
+        }, 1200);
+      } else {
+        document.getElementById('quiz-next-btn').classList.remove('hidden');
+      }
+    }
+
+    function openRechargeHeartsModal() {
+      const goModal = document.getElementById('gameover-modal');
+      goModal.classList.remove('hidden');
+      goModal.classList.add('flex');
+    }
+
+    function closeRechargeHeartsModal() {
+      const goModal = document.getElementById('gameover-modal');
+      goModal.classList.add('hidden');
+      goModal.classList.remove('flex');
+    }
+
+    function rechargeHeartsAndContinue() {
+      playSuccess();
+      state.hearts = 3;
+      saveState();
+      updateHeaderStats();
+      closeRechargeHeartsModal();
+      showToast('💖 تم إعادة شحن القلوب الثلاثة (❤️❤️❤️)! أكمل التحدي الآن.');
+
+      const quizModal = document.getElementById('quiz-modal');
+      if (!quizModal.classList.contains('hidden') && state.activeStage) {
+        if (state.answeredCurrent) {
+          document.getElementById('quiz-next-btn').classList.remove('hidden');
+        } else {
+          renderQuizQuestion();
+        }
+      }
+    }
+
+    function returnToMainMenuFromGameOver() {
+      playClick();
+      state.hearts = 3;
+      saveState();
+      updateHeaderStats();
+      closeRechargeHeartsModal();
+      closeQuizModal();
+      showToast('🏠 تم العودة للقائمة الرئيسية وإعادة شحن القلوب (❤️❤️❤️).');
+    }
+
+    function nextQuizQuestion() {
+      playClick();
+      if (state.hearts <= 0) {
+        openRechargeHeartsModal();
+        return;
+      }
+      const stage = state.activeStage;
+      if (state.currentQIndex < stage.questions.length - 1) {
+        state.currentQIndex++;
+        renderQuizQuestion();
+      } else {
+        finishStage();
+      }
+    }
+
+    function finishStage() {
+      const stage = state.activeStage;
+      const total = stage.questions.length;
+      const ratio = state.stageCorrectCount / total;
+      const stars = ratio === 1 ? 3 : ratio >= 0.6 ? 2 : 1;
+
+      const prevStars = state.completedStages[stage.id] || 0;
+      state.completedStages[stage.id] = Math.max(prevStars, stars);
+      state.xp += 50;
+      saveState();
+      updateHeaderStats();
+      renderStages();
+      closeQuizModal();
+
+      if (stage.isBoss) {
+        playSuccess();
+        document.getElementById('cert-score-val').textContent = state.score;
+        const certModal = document.getElementById('cert-modal');
+        certModal.classList.remove('hidden');
+        certModal.classList.add('flex');
+      } else {
+        playSuccess();
+        showToast(`🎉 أحسنت! أتممت "${stage.title}" وحصلت على ${'★'.repeat(stars)} (${state.stageCorrectCount}/${total})`);
+      }
+    }
+
+    function closeCertModal() {
+      playClick();
+      const certModal = document.getElementById('cert-modal');
+      certModal.classList.add('hidden');
+      certModal.classList.remove('flex');
+    }
+
+    // ==================== تهيئة المنصة عند التحميل ====================
+    window.addEventListener('DOMContentLoaded', () => {
+      updateHeaderStats();
+      renderFlashcardFilters();
+      renderCurrentFlashcard();
+      renderStages();
+    });
+  </script>
+</body>
+</html>
